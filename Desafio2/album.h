@@ -3,6 +3,7 @@
 
 #include <string>
 using namespace std;
+
 class album
 {
 private:
@@ -12,10 +13,12 @@ private:
     string fechaLanzamiento;
     string ruta_portada;
     int puntuacion;
+    string generos;
     //lista de canciones
 
 public:
     album();
+    void cargarAlbumnes(album**& albumnes, int& totalAlbumnes);
 };
 
 #endif // ALBUM_H

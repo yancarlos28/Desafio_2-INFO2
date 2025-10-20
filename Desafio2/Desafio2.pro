@@ -5,17 +5,18 @@ CONFIG -= qt
 
 SOURCES += \
         album.cpp \
-        anuncios.cpp \
+        anuncio.cpp \
         artista.cpp \
         cancion.cpp \
         lista_favoritos.cpp \
         main.cpp \
-        usuarios.cpp
+        usuario.cpp
 
 HEADERS += \
     album.h \
-    anuncios.h \
+    anuncio.h \
     artista.h \
     cancion.h \
     lista_favoritos.h \
-    usuarios.h
+    memoria.h \
+    usuario.h

@@ -2,8 +2,9 @@
 #define ARTISTA_H
 
 #include <string>
-#include <iostream>
+
 using namespace std;
+
 class artista
 {
 
@@ -17,7 +18,7 @@ private:
 public:
     artista();
     int totalAlbums();
-
+    void cargarArtistas(artista**& artistas, int& totalArtistas);
 };
 
 #endif // ARTISTA_H

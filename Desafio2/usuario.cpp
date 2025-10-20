@@ -1,8 +1,14 @@
-#include "usuarios.h"
+#include "usuario.h"
 #include "lista_favoritos.h"
 #include "cancion.h"
 #include <cstdio>   // printf
 #include <cctype>   // std::tolower
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <memoria.h>
+using namespace std;
 
 // ---------------------- Helpers internos ----------------------
 
@@ -55,12 +61,12 @@ usuarios::~usuarios(){
 
 // ---------------------- Setters ----------------------
 
-void usuarios::setNickname(const std::string& s){ nickname = s; }
-void usuarios::setCiudad(const std::string& s){ ciudad = s; }
-void usuarios::setPais(const std::string& s){ pais = s; }
-void usuarios::setFecha(const std::string& s){ fecha = s; }
+void usuario::setNickname(const std::string& s){ nickname = s; }
+void usuario::setCiudad(const std::string& s){ ciudad = s; }
+void usuario::setPais(const std::string& s){ pais = s; }
+void usuario::setFecha(const std::string& s){ fecha = s; }
 
-void usuarios::setMembresia(const std::string& s){
+void usuario::setMembresia(const std::string& s){
     membresia = s;
     to_lower_ascii(membresia);
     // aceptar variantes comunes
@@ -73,7 +79,7 @@ void usuarios::setMembresia(const std::string& s){
 
 // ---------------------- Configuración de historiales ----------------------
 
-void usuarios::configurarHistoriales(int capAleatorio, int capFav){
+void usuario::configurarHistoriales(int capAleatorio, int capFav){
     if (historial_aleatorio) { delete[] historial_aleatorio; historial_aleatorio = nullptr; }
     if (historial_favoritos) { delete[] historial_favoritos; historial_favoritos = nullptr; }
     histA_len = histF_len = 0;
@@ -93,15 +99,15 @@ void usuarios::configurarHistoriales(int capAleatorio, int capFav){
 
 // ---------------------- Lógica de reproducción (stubs) ----------------------
 
-void usuarios::iniciarReproduccion(){
+void usuario::iniciarReproduccion(){
     // Aquí resetearías estados, prepararías cola, etc.
 }
 
-void usuarios::detenerReproduccion(){
+void usuario::detenerReproduccion(){
     // Aquí detienes y limpias estado actual de reproducción si lo manejas.
 }
 
-void usuarios::pasarSiguiente(){
+void usuario::pasarSiguiente(){
     // En tu implementación real: selecciona la siguiente canción y haz play.
     // Ejemplo de registrar en historial aleatorio (simulado):
     cancion* actual = nullptr; // TODO: apunta a la canción realmente reproducida
@@ -110,7 +116,7 @@ void usuarios::pasarSiguiente(){
     }
 }
 
-void usuarios::volverAnterior(){
+void usuario::volverAnterior(){
     // Recupera la inmediatamente anterior a la última reproducida en aleatorio
     cancion* anterior = get_hist_at_logical(historial_aleatorio, histA_len, histA_cap, 1);
     if (anterior){
@@ -121,30 +127,30 @@ void usuarios::volverAnterior(){
     }
 }
 
-void usuarios::repetirCancion(){
+void usuario::repetirCancion(){
     repetirFlag = !repetirFlag; // toggle
 }
 
 // ---------------------- Búsqueda / seguimiento ----------------------
 
-cancion* usuarios::buscar_cancion(int id9) const {
+cancion* usuario::buscar_cancion(int id9) const {
     (void)id9;
     // Debería consultar a tu repositorio/catálogo. Stub:
     return nullptr;
 }
 
-bool usuarios::seguir_listafavorita(lista_favoritos* listaAjena){
+bool usuario::seguir_listafavorita(lista_favoritos* listaAjena){
     sigueA = listaAjena; // solo referencia
     return (sigueA != nullptr);
 }
 
-void usuarios::dejar_seguir(){
+void usuario::dejar_seguir(){
     sigueA = nullptr;
 }
 
 // ---------------------- Salida requerida ----------------------
 
-void usuarios::mostrar_cancionUbicacion() const {
+void usuario::mostrar_cancionUbicacion() const {
     // Debe imprimir ruta de audio (128/320 según membresía) y portada.
     // Aquí usamos un stub de canción actual:
     const cancion* actual = nullptr; // TODO: apunta a la canción en reproducción
@@ -166,7 +172,47 @@ void usuarios::mostrar_cancionUbicacion() const {
 
 // ---------------------- Utilidades ----------------------
 
-bool usuarios::esPremium() const {
+bool usuario::esPremium() const {
     // miembros normalizados a "premium" o "estandar"
     return membresia == "premium";
+}
+
+void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {
+
+    ifstream archivo("usuario.txt");
+    if (!archivo.is_open()) {
+        cout << "No se pudo abrir el archivo de Alojamientos\n";
+        return;
+    }
+
+    string linea;
+    int total = 0;
+
+    // Contar líneas para conocer cuántas canciones hay
+    while (getline(archivo, linea)) total++;
+    archivo.clear();
+    archivo.seekg(0);
+
+    usuarios = new usuario*[total];
+    registrarMemoria<usuario*>(total);
+
+    totalUsuarios = total;
+    int i = 0;
+
+    // Leer y construir cada objeto cancion
+    while (getline(archivo, linea)) {
+        stringstream frase(linea);
+        string nombre_usuario, membresia, ciudad, pais, fecha_Incripcion;
+        getline(frase, nombre_usuario, ',');
+        getline(frase, membresia, ',');
+        getline(frase, ciudad, ',');
+        getline(frase, pais, ',');
+        getline(frase, fecha_Incripcion, ',');
+
+        usuario* nuevoUsuario = new usuario(nombre_usuario, membresia, ciudad, pais, fecha_Incripcion);
+        registrarMemoria<usuario>(1);
+        usuarios[i++] = nuevoUsuario;
+        incrementarIteraciones();
+    }
+    archivo.close();
 }
