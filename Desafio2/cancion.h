@@ -8,17 +8,31 @@ class cancion
 {
 private:
 
-    string nombre_cancion;
-    int id_cancion;
-    int duracion;
-    string ruta_128;
-    string ruta_320;
-    long reproducciones;
+    string nombreCancion;
+    string id_cancion;
+    string duracion;
+    string ruta;
+    string creditos;
+    string reproducciones;
+
 public:
+
     //constructor
-    cancion();
+    cancion(const string& nombreCancion_,
+            const string& id_cancion_,
+            const string& duracion_,
+            const string& ruta_,
+            const string& creditos_,
+            const string& reproducciones_);
+
     static void cargarCancion(cancion**& canciones, int& totalCanciones);
     void ruta_portada();
+    // Getters
+    const string& getNombreCancion() const;
+    const string& getId_Cancion() const;
+    const string& getRuta() const;
+    const string& getCreditos() const;
+
 };
 
 #endif // CANCION_H

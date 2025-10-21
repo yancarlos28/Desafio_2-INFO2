@@ -11,16 +11,22 @@ class usuario
 private:
     string nickname;
     string membresia;
-    string ciudad_usuario;
-    string pais_usuario;
-    string fecha_inscripcion;
-    cancion **historial_aleatorio;
-    cancion **historial_favoritos;
+    string ciudadUsuario;
+    string paisUsuario;
+    string fechaInscripcion;
+    cancion **historialAleatorio;
+    cancion **historialFavoritos;
     lista_favoritos *sigueA;
 
 public:
     //constructor
     usuario();
+    usuario(const string& nickname_,
+            const string& membresia_,
+            const string& ciudadUsuario_,
+            const string& paisUsuario_,
+            const string& fechaInscripcion_);
+
     //cargar datos
     void cargarUsuarios(usuario**& usuarios, int& totalUsuarios);
     //control de reproduccion
@@ -39,12 +45,13 @@ public:
     void mostrar_cancionUbicacion() const;
 
     //getter y setter
-    bool esPremium() const;
 
-    const string& getNickname() const { return nickname; }
-    const string& getCiudad()   const { return ciudad_usuario; }
-    const string& getPais()     const { return pais_usuario;   }
-    const string& getFecha()    const { return fecha_inscripcion;  }
+    // Getters
+    const string& getNickname() const;
+    const string& getMembresia() const;
+    const string& getCiudad() const;
+    const string& getPais() const;
+    const string& getFecha() const;
 
     void setNickname(const string& s);
     void setMembresia(const string& s);     // normaliza a "premium"/"estandar"

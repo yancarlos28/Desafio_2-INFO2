@@ -9,16 +9,32 @@ class artista
 {
 
 private:
-    int id_artista;
-    int edad;
+
+    string nombre_artista;
+    string id_artista;
+    string edad;
     string paisOrigen;
-    long seguidores;
-    int rankingTendencia;
+    string seguidores;
+    string puestoRanking;
+    string albumes;
 
 public:
-    artista();
-    int totalAlbums();
+
+    artista(const string& nombre_artista_,
+            const string& id_artista_,
+            const string& edad_,
+            const string& paisOrigen_,
+            const string& seguidores_,
+            const string& puestoRanking_,
+            const string& albumes_);
+
     void cargarArtistas(artista**& artistas, int& totalArtistas);
+    int totalAlbums();
+    // Getters
+    const string& getNombre_Artista() const;
+    const string& getId_Artista() const;
+    const string& getAlbumes() const;
+
 };
 
 #endif // ARTISTA_H

@@ -6,12 +6,28 @@
 #include <memoria.h>
 using namespace std;
 
-artista::artista() {}
+
+// ---------- Constructor parametrizado ----------
+artista::artista(const string& nombre_artista_,
+                 const string& id_artista_,
+                 const string& edad_,
+                 const string& paisOrigen_,
+                 const string& seguidores_,
+                 const string& puestoRanking_,
+                 const string& albumes_)
+    :nombre_artista(nombre_artista_),
+    id_artista(id_artista_),
+    edad(edad_),
+    paisOrigen(paisOrigen_),
+    seguidores(seguidores_),
+    puestoRanking(puestoRanking_),
+    albumes(albumes_)
+{}
 
 void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
     ifstream archivo("artistas.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de Alojamientos\n";
+        cout << "No se pudo abrir el archivo de artistas.txt\n";
         return;
     }
 
@@ -47,4 +63,16 @@ void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
         incrementarIteraciones();
     }
     archivo.close();
+}
+// -------------------- Getters --------------------
+const string& artista::getNombre_Artista() const {
+    return nombre_artista;
+}
+
+const string& artista::getId_Artista() const {
+    return id_artista;
+}
+
+const string& artista::getAlbumes() const {
+    return albumes;
 }

@@ -6,10 +6,23 @@
 #include <memoria.h>
 using namespace std;
 
+cancion::cancion(const string& nombreCancion_,
+                 const string& id_cancion_,
+                 const string& duracion_,
+                 const string& ruta_,
+                 const string& creditos_,
+                 const string &reproducciones_)
+    : nombreCancion(nombreCancion_),
+    id_cancion(id_cancion_),
+    duracion(duracion_),
+    ruta(ruta_),
+    creditos(creditos_),
+    reproducciones(reproducciones_)
+{}
 void cancion::cargarCancion(cancion**& canciones, int& totalCanciones) {
     ifstream archivo("cancion.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de Alojamientos\n";
+        cout << "No se pudo abrir el archivo de canciones\n";
         return;
     }
 
@@ -30,17 +43,34 @@ void cancion::cargarCancion(cancion**& canciones, int& totalCanciones) {
     // Leer y construir cada objeto cancion
     while (getline(archivo, linea)) {
         stringstream frase(linea);
-        string nombre_cancion, id_cancion, ruta_cancion, creditos, vecesRepetidas;
+        string nombre_cancion, id_cancion, duracion, ruta_cancion, creditos, vecesRepetidas;
         getline(frase, nombre_cancion, ',');
         getline(frase, id_cancion, ',');
+        getline(frase, duracion, ',');
         getline(frase, ruta_cancion, ',');
         getline(frase, creditos, ',');
         getline(frase, vecesRepetidas, ',');
 
-        cancion* nuevaCancion = new cancion(nombre_cancion, id_cancion, ruta_cancion, creditos, vecesRepetidas);
+        cancion* nuevaCancion = new cancion(nombre_cancion, id_cancion, duracion, ruta_cancion, creditos, vecesRepetidas);
         registrarMemoria<cancion>(1);
         canciones[i++] = nuevaCancion;
         incrementarIteraciones();
     }
     archivo.close();
+}
+// -------------------- Getters --------------------
+const string& cancion::getNombreCancion() const {
+    return nombreCancion;
+}
+
+const string& cancion::getId_Cancion() const {
+    return id_cancion;
+}
+
+const string& cancion::getRuta() const {
+    return ruta;
+}
+
+const string& cancion::getCreditos() const {
+    return creditos;
 }

@@ -15,6 +15,7 @@ public:
     bool eliminar(int &id_cancion);
     void fusionarDe(string &ListaFavoritos);
     void cargarListasFavoritos(lista_favoritos**& listaFavoritos, int& totalListas);
+    lista_favoritos(const string& id_usuario, const string& id_canciones);
 
 };
 
