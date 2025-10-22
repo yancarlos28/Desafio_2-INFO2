@@ -10,7 +10,8 @@ SOURCES += \
         cancion.cpp \
         lista_favoritos.cpp \
         main.cpp \
-        usuario.cpp
+        usuario.cpp \
+        utilidades.cpp
 
 HEADERS += \
     album.h \
@@ -19,4 +20,5 @@ HEADERS += \
     cancion.h \
     lista_favoritos.h \
     memoria.h \
-    usuario.h
+    usuario.h \
+    utilidades.h

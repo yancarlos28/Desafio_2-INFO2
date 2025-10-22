@@ -58,7 +58,7 @@ void album::cargarAlbumnes(album**& albumnes, int& totalAlbumnes) {
         getline(frase, rutaImagen, ',');
         getline(frase, generos, ',');
         getline(frase, puntuacion, ',');
-        getline(frase, sello, ',');
+        getline(frase, sello);
 
 
         album* nuevoAlbum = new album(nombre_album, id_album, duracion, fechaLanzamiento, rutaImagen, generos,puntuacion,sello);

@@ -55,7 +55,7 @@ void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
         getline(frase, pais, ',');
         getline(frase, cantidadSeguidores, ',');
         getline(frase, puestoRanking, ',');
-        getline(frase, albumnes, ',');
+        getline(frase, albumnes);
 
         artista* nuevoArtista = new artista(nombre_artista, id_artista, edad, pais, cantidadSeguidores, puestoRanking, albumnes);
         registrarMemoria<artista>(1);

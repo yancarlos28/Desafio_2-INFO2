@@ -49,7 +49,7 @@ void cancion::cargarCancion(cancion**& canciones, int& totalCanciones) {
         getline(frase, duracion, ',');
         getline(frase, ruta_cancion, ',');
         getline(frase, creditos, ',');
-        getline(frase, vecesRepetidas, ',');
+        getline(frase, vecesRepetidas);
 
         cancion* nuevaCancion = new cancion(nombre_cancion, id_cancion, duracion, ruta_cancion, creditos, vecesRepetidas);
         registrarMemoria<cancion>(1);

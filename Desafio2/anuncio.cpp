@@ -27,7 +27,7 @@ void anuncio::cargarAnuncios(anuncio**& anuncios, int& totalAnuncios) {
     string linea;
     int total = 0;
 
-    // Contar líneas para conocer cuántas canciones hay
+    // Contar líneas para conocer cuántas anuncios hay
     while (getline(archivo, linea)) total++;
     archivo.clear();
     archivo.seekg(0);
@@ -43,7 +43,7 @@ void anuncio::cargarAnuncios(anuncio**& anuncios, int& totalAnuncios) {
         stringstream frase(linea);
         string categoria, mensaje;
         getline(frase, categoria, ',');
-        getline(frase, mensaje, ',');
+        getline(frase, mensaje);
 
 
         anuncio* nuevoAnuncio = new anuncio(categoria, mensaje);
@@ -55,7 +55,7 @@ void anuncio::cargarAnuncios(anuncio**& anuncios, int& totalAnuncios) {
 }
 
 // -------------------- Getters --------------------
-const string& anuncio::getTipo_Anuncio() const {
+const string& anuncio::getTipo_Anuncio() const  {
     return tipo_anuncio;
 }
 

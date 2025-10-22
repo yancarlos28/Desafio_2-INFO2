@@ -65,7 +65,7 @@ void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {
         getline(frase, membresia, ',');
         getline(frase, ciudad, ',');
         getline(frase, pais, ',');
-        getline(frase, fecha_Incripcion, ',');
+        getline(frase, fecha_Incripcion);
 
         usuario* nuevoUsuario = new usuario(nombre_usuario, membresia, ciudad, pais, fecha_Incripcion);
         registrarMemoria<usuario>(1);
