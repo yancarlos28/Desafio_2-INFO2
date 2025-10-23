@@ -107,3 +107,125 @@ void lista_favoritos::enlazarDesdeCadena(const string& id_canciones,
         if (ptr && pos>=0) lista_favorito[pos] = ptr;
     }
 }
+
+// 0) (ya existente) findSongById(...) te da el puntero real a cancion*
+/* static cancion* findSongById(cancion** canciones, int total, const string& idTxt) {...} */
+
+// Compactar (sin huecos): deja solo punteros válidos y ajusta tam_lista
+static void compactarLista(cancion**& arr, int& tam_lista) {
+    int cnt = 0;
+    for (int i = 0; i < tam_lista; ++i) if (arr[i]) ++cnt;
+
+    cancion** nuevo = (cnt > 0) ? new cancion*[cnt] : 0;
+    int j = 0;
+    for (int i = 0; i < tam_lista; ++i) if (arr[i]) nuevo[j++] = arr[i];
+
+    if (arr) delete [] arr;
+    arr = nuevo;
+    tam_lista = cnt;
+}
+
+// Agregar por ID SIN huecos (realloc exacto +1)
+bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
+                                        cancion** canciones, int totalCanciones)
+{
+    if (idTxt.empty() || !canciones || totalCanciones <= 0) return false;
+
+    // 1) Resolver puntero de canción
+    cancion* ptr = findSongById(canciones, totalCanciones, idTxt);
+    if (!ptr) return false;  // ID no existe en catálogo
+
+    // 2) Evitar duplicado
+    for (int i = 0; i < tam_lista; ++i) {
+        if (lista_favorito[i] && lista_favorito[i] == ptr) return false;
+    }
+
+    // 3) Compactar antes de crecer (no huecos)
+    compactarLista(lista_favorito, tam_lista);
+
+    // 4) Redimensionar exacto +1 y appendea
+    cancion** nuevo = new cancion*[tam_lista + 1];
+    for (int i = 0; i < tam_lista; ++i) nuevo[i] = lista_favorito[i];
+    nuevo[tam_lista] = ptr;
+
+    if (lista_favorito) delete [] lista_favorito;
+    lista_favorito = nuevo;
+    tam_lista += 1;
+
+    return true;
+}
+bool lista_favoritos::eliminarPorIdTexto(const string& idTxt)
+{
+    if (!lista_favorito || tam_lista <= 0) return false;
+
+    // 1) localizar índice a eliminar por id de texto
+    int pos = -1;
+    for (int i = 0; i < tam_lista; ++i) {
+        if (lista_favorito[i] && lista_favorito[i]->getId_Cancion() == idTxt) {
+            pos = i; break;
+        }
+    }
+    if (pos < 0) return false; // no estaba
+
+    // 2) crear nuevo arreglo exacto (tam_lista-1) copiando todo excepto pos
+    cancion** nuevo = (tam_lista - 1 > 0) ? new cancion*[tam_lista - 1] : 0;
+    for (int i = 0, j = 0; i < tam_lista; ++i) {
+        if (i == pos) continue;
+        nuevo[j++] = lista_favorito[i];
+    }
+
+    // 3) reemplazar arreglo y actualizar tamaño lógico
+    delete [] lista_favorito;
+    lista_favorito = nuevo;
+    tam_lista -= 1;
+
+    return true;
+}
+
+bool guardarListasFavoritos(lista_favoritos** listas, int totalListas)
+{
+    // Validaciones básicas
+    if (!listas || totalListas <= 0) {
+        // Si no hay listas, aun así truncamos el archivo a vacío para ser consistentes
+        ofstream vacio("lista_favoritos.txt", ios::out | ios::trunc);
+        return vacio.good();
+    }
+
+    ofstream out("lista_favoritos.txt", ios::out | ios::trunc);
+    if (!out.is_open()) {
+        std::cout << "No se pudo abrir lista_favoritos.txt para escritura.\n";
+        return false;
+    }
+
+    // Recorremos todas las listas y serializamos: nickname,id;id;id
+    for (int i = 0; i < totalListas; ++i) {
+        incrementarIteraciones();
+
+        lista_favoritos* lf = listas[i];
+        if (!lf) continue;
+
+        const string& nick = lf->getNicknameSeguidor();
+        cancion** arr = lf->getLista();
+        int n = lf->getTamLista();
+
+        out << nick << ",";  // siempre escribimos el nickname
+
+        // Escribir ids separados por ';' (solo punteros válidos)
+        bool primero = true;
+        for (int j = 0; j < n; ++j) {
+            incrementarIteraciones();
+
+            if (!arr || !arr[j]) continue;
+            const string& id = arr[j]->getId_Cancion();
+            if (id.empty()) continue;
+
+            if (!primero) out << ';';
+            out << id;
+            primero = false;
+        }
+        out << "\n";
+    }
+
+    out.flush();
+    return out.good();
+}

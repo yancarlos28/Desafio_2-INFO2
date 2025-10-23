@@ -11,7 +11,8 @@ private:
     string nombreCancion;
     string id_cancion;
     string duracion;
-    string ruta;
+    string ruta128;
+    string ruta320;
     string creditos;
     string reproducciones;
 
@@ -21,18 +22,20 @@ public:
     cancion(const string& nombreCancion_,
             const string& id_cancion_,
             const string& duracion_,
-            const string& ruta_,
+            const string& ruta128_,
+            const string& ruta320_,
             const string& creditos_,
             const string& reproducciones_);
 
     static void cargarCancion(cancion**& canciones, int& totalCanciones);
-    void ruta_portada();
+
     // Getters
     const string& getNombreCancion() const;
     const string& getId_Cancion() const;
     const string& getRuta() const;
     const string& getCreditos() const;
-
+    const string& getRuta128() const;
+    const string& getRuta320() const;
 };
 
 #endif // CANCION_H

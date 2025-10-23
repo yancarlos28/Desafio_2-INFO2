@@ -37,7 +37,7 @@ public:
     void repetirCancion();
 
     //Busqueda y seguimiento
-    cancion* buscar_cancion(int id9) const;
+    cancion* buscar_cancion(string id_cancion) const;
     bool seguir_listafavorita(lista_favoritos* lista_aSeguir);
     void dejar_seguir();
 
@@ -53,11 +53,6 @@ public:
     const string& getPais() const;
     const string& getFecha() const;
 
-    void setNickname(const string& s);
-    void setMembresia(const string& s);     // normaliza a "premium"/"estandar"
-    void setCiudad(const string& s);
-    void setPais(const string& s);
-    void setFecha(const string& s);
 
     // Configurar capacidades de historiales (por defecto 4 y 6)
     void configurarHistoriales(int capAleatorio = 4, int capFav = 6);
