@@ -6,6 +6,7 @@
 #include <memoria.h>
 using namespace std;
 
+//constructor parametrizado
 cancion::cancion(const string& nombreCancion_,
                  const string& id_cancion_,
                  const string& duracion_,
@@ -21,10 +22,12 @@ cancion::cancion(const string& nombreCancion_,
     creditos(creditos_),
     reproducciones(reproducciones_)
 {}
+
+//cargar canciones
 void cancion::cargarCancion(cancion**& canciones, int& totalCanciones) {
-    ifstream archivo("cancion.txt");
+    ifstream archivo("canciones.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de canciones\n";
+        cout << "No se pudo abrir el archivo de canciones.txt\n";
         return;
     }
 
@@ -79,4 +82,7 @@ const string& cancion::getRuta320() const {
 
 const string& cancion::getCreditos() const {
     return creditos;
+}
+const string& cancion::getDuracion() const{
+    return duracion;
 }

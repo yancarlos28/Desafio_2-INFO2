@@ -24,6 +24,7 @@ artista::artista(const string& nombre_artista_,
     albumes(albumes_)
 {}
 
+//cargar artistas
 void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
     ifstream archivo("artistas.txt");
     if (!archivo.is_open()) {
@@ -64,6 +65,7 @@ void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
     }
     archivo.close();
 }
+
 // -------------------- Getters --------------------
 const string& artista::getNombre_Artista() const {
     return nombre_artista;

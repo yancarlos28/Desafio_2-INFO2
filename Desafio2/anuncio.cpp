@@ -16,6 +16,7 @@ anuncio::anuncio(const string& tipo_anuncio_, const string& mensaje_)
     //     this->tipo_anuncio = "C"; // default
 }
 
+//cargar anuncios
 void anuncio::cargarAnuncios(anuncio**& anuncios, int& totalAnuncios) {
 
     ifstream archivo("anuncio.txt");

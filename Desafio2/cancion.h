@@ -32,10 +32,10 @@ public:
     // Getters
     const string& getNombreCancion() const;
     const string& getId_Cancion() const;
-    const string& getRuta() const;
     const string& getCreditos() const;
     const string& getRuta128() const;
     const string& getRuta320() const;
+    const string& getDuracion() const;
 };
 
 #endif // CANCION_H

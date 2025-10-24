@@ -22,3 +22,5 @@ HEADERS += \
     memoria.h \
     usuario.h \
     utilidades.h
+
+

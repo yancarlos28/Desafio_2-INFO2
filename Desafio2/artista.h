@@ -28,8 +28,8 @@ public:
             const string& puestoRanking_,
             const string& albumes_);
 
-    void cargarArtistas(artista**& artistas, int& totalArtistas);
-    int totalAlbums();
+    static void cargarArtistas(artista**& artistas, int& totalArtistas);
+
     // Getters
     const string& getNombre_Artista() const;
     const string& getId_Artista() const;

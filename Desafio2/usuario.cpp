@@ -23,23 +23,24 @@ usuario::usuario(const string& nickname_,
     ciudadUsuario(ciudadUsuario_),
     paisUsuario(paisUsuario_),
     fechaInscripcion(fechaInscripcion_),
-    historialAleatorio(nullptr),
-    historialFavoritos(nullptr),
-    sigueA(nullptr)
+    //historialAleatorio(nullptr),
+    //historialFavoritos(nullptr),
+    sigueA(nullptr),
+    favoritos(nullptr)
 {
     // Validar membresía (asumimos viene en minúsculas sin tildes)
     if (membresia != "premium" && membresia != "estandar")
         membresia = "estandar"; // valor por defecto
 
     // Configurar historiales vacíos
-    configurarHistoriales(4, 6);
+    //configurarHistoriales(4, 6);
 }
 
 void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {
 
-    ifstream archivo("usuario.txt");
+    ifstream archivo("usuarios.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de Alojamientos\n";
+        cout << "No se pudo abrir el archivo de usuarios.txt\n";
         return;
     }
 
@@ -83,7 +84,7 @@ const string& usuario::getNickname() const {
 const string& usuario::getMembresia() const {
     return membresia;
 }
-
+/*
 const string& usuario::getCiudad() const {
     return ciudadUsuario;
 }
@@ -94,4 +95,77 @@ const string& usuario::getPais() const {
 
 const string& usuario::getFecha() const {
     return fechaInscripcion;
+}
+*/
+//Implementaciones
+
+bool usuario::seguir_listafavorita(lista_favoritos* lista_aSeguir)
+{
+    // Validaciones simples
+    if (!lista_aSeguir) return false;
+
+    // Si ya la sigo, no hago nada
+    if (sigueA == lista_aSeguir) return false;
+
+    // Enlazo por puntero (no se copia nada)
+    sigueA = lista_aSeguir;
+    return true;
+}
+
+void usuario::dejar_seguir()
+{
+    // Desenlazar
+    sigueA = nullptr;
+}
+void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
+{
+    if (!visitor) return;
+    if (!favoritos) return;
+
+    // Preparar arrays fuente
+    int tamPropio   = favoritos->getTamLista();
+    cancion** arrP  = favoritos->getLista();
+
+    int tamSeguido  = (sigueA ? sigueA->getTamLista() : 0);
+    cancion** arrS  = (sigueA ? sigueA->getLista()     : nullptr);
+
+    // Reservar un arreglo temporal para “vistos” (máximo = propio + seguido)
+    int cap = tamPropio + tamSeguido;
+    if (cap <= 0) cap = 1;
+
+    cancion** vistos = new cancion*[cap];
+    int nVistos = 0;
+
+    // Helper local: ¿ya vimos este ID?
+    auto yaVisto = [&](const string& id)->bool {
+        for (int j = 0; j < nVistos; ++j) {
+            // Comparamos por ID para evitar duplicados aunque los punteros difieran
+            if (vistos[j] && vistos[j]->getId_Cancion() == id) return true;
+        }
+        return false;
+    };
+
+    // 1) Primero, tus canciones
+    for (int i = 0; i < tamPropio; ++i) {
+        cancion* s = arrP ? arrP[i] : nullptr;
+        if (!s) continue;
+        const string& id = s->getId_Cancion();
+        if (yaVisto(id)) continue;
+
+        vistos[nVistos++] = s;
+        visitor(s);
+    }
+
+    // 2) Luego, canciones del seguido (si hay)
+    for (int i = 0; i < tamSeguido; ++i) {
+        cancion* s = arrS ? arrS[i] : nullptr;
+        if (!s) continue;
+        const string& id = s->getId_Cancion();
+        if (yaVisto(id)) continue;
+
+        vistos[nVistos++] = s;
+        visitor(s);
+    }
+
+    delete[] vistos;
 }

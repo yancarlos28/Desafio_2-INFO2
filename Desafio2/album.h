@@ -27,13 +27,13 @@ public:
           const string& generos_,
           const string& puntuacion_,
           const string& sello_);
-    ~album();
 
-    void cargarAlbumnes(album**& albumnes, int& totalAlbumnes);
+    static void cargarAlbumnes(album**& albumnes, int& totalAlbumnes);
 
     // Getters
     const string& getId_Album() const;
     const string& getRuta_Imagen() const;
+    const string& getNombre_Album() const;
 };
 
 #endif // ALBUM_H

@@ -6,6 +6,7 @@
 #include <memoria.h>
 using namespace std;
 
+//constructor parametrizado
 album::album(const string& nombre_album_,
              const string& id_album_,
              const string& duracion_,
@@ -24,12 +25,11 @@ album::album(const string& nombre_album_,
     generos(generos_),
     sello(sello_){}
 
-//~album()
-
+//cargar albumes
 void album::cargarAlbumnes(album**& albumnes, int& totalAlbumnes) {
-    ifstream archivo("albumn.txt");
+    ifstream archivo("album.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de Alojamientos\n";
+        cout << "No se pudo abrir el archivo de album.txt\n";
         return;
     }
 
@@ -68,6 +68,7 @@ void album::cargarAlbumnes(album**& albumnes, int& totalAlbumnes) {
     }
     archivo.close();
 }
+
 // -------------------- Getters --------------------
 const string& album::getId_Album() const {
     return id_album;
@@ -77,3 +78,6 @@ const string& album::getRuta_Imagen() const {
     return ruta_Imagen;
 }
 
+const string& album::getNombre_Album() const {
+    return nombre_album;
+}

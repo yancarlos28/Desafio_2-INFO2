@@ -6,8 +6,6 @@
 #include <memoria.h>
 using namespace std;
 
-
-
 // Constructor parametrizado
 lista_favoritos::lista_favoritos(const string& id_usuario, const string& id_canciones)
     : nickname_seguidor(id_usuario),
@@ -33,9 +31,9 @@ lista_favoritos::lista_favoritos(const string& id_usuario, const string& id_canc
 
 //cargar lista de favoritos
 void lista_favoritos::cargarListasFavoritos(lista_favoritos**& listaFavoritos, int& totalListas, cancion** canciones, int totalCanciones) {
-    ifstream archivo("lista_favoritos.txt");
+    ifstream archivo("listafavoritos.txt");
     if (!archivo.is_open()) {
-        cout << "No se pudo abrir el archivo de lista_favoritos\n";
+        cout << "No se pudo abrir el archivo de listafavoritos.txt\n";
         return;
     }
 
@@ -70,8 +68,8 @@ void lista_favoritos::cargarListasFavoritos(lista_favoritos**& listaFavoritos, i
     archivo.close();
 }
 
-// Busca linealmente una canción por id (texto) en el arreglo cargado
-static cancion* findSongById(cancion** canciones, int total, const string& idTxt){
+// Busca linealmente una canción por id en el arreglo cargado
+static cancion* encontrarCancionporID(cancion** canciones, int total, const string& idTxt){
     for (int i=0;i<total;++i){
         if (canciones[i] && canciones[i]->getId_Cancion() == idTxt){
             return canciones[i];
@@ -79,39 +77,7 @@ static cancion* findSongById(cancion** canciones, int total, const string& idTxt
     }
     return 0;
 }
-
-// id_canciones: "100010101;100020202;100030303"
-void lista_favoritos::enlazarDesdeCadena(const string& id_canciones,
-                                         cancion** canciones, int totalCanciones)
-{
-    if (!lista_favorito) return;
-
-    // Recorremos la cadena y vamos asignando secuencialmente
-    int pos = 0;                // índice en lista_favorito
-    string cur;
-    for (size_t i=0;i<id_canciones.size();++i){
-        char c = id_canciones[i];
-        if (c==';'){
-            if (!cur.empty()){
-                cancion* ptr = findSongById(canciones, totalCanciones, cur);
-                if (ptr) lista_favorito[pos] = ptr;
-                ++pos;
-                cur.clear();
-            }
-        } else if (c!=' ' && c!='\t' && c!='\r' && c!='\n'){
-            cur.push_back(c);
-        }
-    }
-    if (!cur.empty() && lista_favorito){ // último id (sin ';' final)
-        cancion* ptr = findSongById(canciones, totalCanciones, cur);
-        if (ptr && pos>=0) lista_favorito[pos] = ptr;
-    }
-}
-
-// 0) (ya existente) findSongById(...) te da el puntero real a cancion*
-/* static cancion* findSongById(cancion** canciones, int total, const string& idTxt) {...} */
-
-// Compactar (sin huecos): deja solo punteros válidos y ajusta tam_lista
+// Compactar: deja solo punteros válidos y ajusta tam_lista
 static void compactarLista(cancion**& arr, int& tam_lista) {
     int cnt = 0;
     for (int i = 0; i < tam_lista; ++i) if (arr[i]) ++cnt;
@@ -125,6 +91,40 @@ static void compactarLista(cancion**& arr, int& tam_lista) {
     tam_lista = cnt;
 }
 
+// Enlazar desde id_canciones: "100010101;100020202;100030303"
+void lista_favoritos::enlazarDesdeCadena(const string& id_canciones,
+                                         cancion** canciones, int totalCanciones)
+{
+    if (!lista_favorito || tam_lista <= 0) return;
+
+    int pos = 0;
+    string cur;
+
+    for (size_t i = 0; i < id_canciones.size(); ++i) {
+        char c = id_canciones[i];
+        if (c == ';') {
+            if (!cur.empty()) {
+                cancion* ptr = encontrarCancionporID(canciones, totalCanciones, cur);
+                if (ptr && pos < tam_lista) {
+                    lista_favorito[pos++] = ptr;   // solo si hay espacio
+                }
+                cur.clear();
+            }
+        } else if (c!=' ' && c!='\t' && c!='\r' && c!='\n') {
+            cur.push_back(c);
+        }
+    }
+
+    // último id (sin ';' final)
+    if (!cur.empty() && pos < tam_lista) {
+        cancion* ptr = encontrarCancionporID(canciones, totalCanciones, cur);
+        if (ptr) lista_favorito[pos++] = ptr;
+    }
+
+    // 🧹 Compacta: quita nulos y ajusta tam_lista
+    compactarLista(lista_favorito, tam_lista);
+}
+
 // Agregar por ID SIN huecos (realloc exacto +1)
 bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
                                         cancion** canciones, int totalCanciones)
@@ -132,7 +132,7 @@ bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
     if (idTxt.empty() || !canciones || totalCanciones <= 0) return false;
 
     // 1) Resolver puntero de canción
-    cancion* ptr = findSongById(canciones, totalCanciones, idTxt);
+    cancion* ptr = encontrarCancionporID(canciones, totalCanciones, idTxt);
     if (!ptr) return false;  // ID no existe en catálogo
 
     // 2) Evitar duplicado
@@ -154,6 +154,8 @@ bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
 
     return true;
 }
+
+// Eliminar por ID SIN huecos (realloc exacto -1)
 bool lista_favoritos::eliminarPorIdTexto(const string& idTxt)
 {
     if (!lista_favorito || tam_lista <= 0) return false;
@@ -187,13 +189,13 @@ bool guardarListasFavoritos(lista_favoritos** listas, int totalListas)
     // Validaciones básicas
     if (!listas || totalListas <= 0) {
         // Si no hay listas, aun así truncamos el archivo a vacío para ser consistentes
-        ofstream vacio("lista_favoritos.txt", ios::out | ios::trunc);
+        ofstream vacio("listafavoritos.txt", ios::out | ios::trunc);
         return vacio.good();
     }
 
-    ofstream out("lista_favoritos.txt", ios::out | ios::trunc);
+    ofstream out("listafavoritos.txt", ios::out | ios::trunc);
     if (!out.is_open()) {
-        std::cout << "No se pudo abrir lista_favoritos.txt para escritura.\n";
+        std::cout << "No se pudo abrir listafavoritos.txt para escritura.\n";
         return false;
     }
 
@@ -229,3 +231,6 @@ bool guardarListasFavoritos(lista_favoritos** listas, int totalListas)
     out.flush();
     return out.good();
 }
+
+
+
