@@ -52,7 +52,7 @@ bool seguirListaFavoritosPorNickname(usuario** usuarios, int totalUsuarios,
     if (!objetivo) { cout << "[ERROR] No existe el usuario: " << nickObjetivo << "\n"; return false; }
     if (objetivo == seguidor) { cout << "[WARN] No puedes seguir tu propia lista.\n"; return false; }
 
-    // 🔑 CLAVE: buscar en el ARREGLO DE LISTAS por nickname
+    //  CLAVE: buscar en el ARREGLO DE LISTAS por nickname
     lista_favoritos* listaObjetivo = buscarListaDeFavoritos(objetivo, listas, totalListas);
     if (!listaObjetivo) {
         cout << "[ERROR] El usuario objetivo no tiene lista de favoritos.\n";
@@ -314,15 +314,10 @@ void reproducirCancion(usuario* user,
         cout << "========Reproduciendo========\n";
 
         cout << "Cantante: "<< artistaNombre << ""<< endl;
-
         cout << "Album: "<< nombreAlbum << ""<< endl;
-
         cout << "Ruta a la portada: "<< rutaAlbum << ""<< endl;
-
         cout << "Titulo de la cancion: "<< nombreCancion << ""<< endl;
-
         cout << "Ruta al archivo del audio: "<< ruta_320_Cancion << ""<< endl;
-
         cout << "Duracion: "<< duracion_Cancion << ""<< endl;
     }
 };
@@ -444,11 +439,9 @@ void reproduccionAleatoria(usuario* user,
                            int& totalAnuncios)
 {
     if (!user || !canciones || totalCanciones <= 0) {
-        std::cout << "(No hay canciones para reproducir)\n";
+        cout << "(No hay canciones para reproducir)\n";
         return;
     }
-
-    // K = 5: límite de canciones a reproducir, como exige el enunciado
     const int limiteK = 5;
     const int limite = (totalCanciones < limiteK) ? totalCanciones : limiteK;
 
@@ -470,7 +463,7 @@ void reproduccionAleatoria(usuario* user,
         }
     }
 
-    std::cout << "[INFO] Reproduccion finalizada automaticamente tras "
+    cout << "Reproduccion finalizada automaticamente tras "
               << limite << " canciones.\n";
 }
 
@@ -517,7 +510,7 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
         return;
     }
 
-    // Buscar la lista del usuario actual
+    // 1) Buscar la lista del usuario actual por nickname (igual que tu versión)
     lista_favoritos* miLista = 0;
     const string nick = user->getNickname();
     for (int i = 0; i < totalListas; ++i) {
@@ -526,56 +519,230 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
             break;
         }
     }
+    if (!miLista) { cout << "No se encontró una lista de favoritos para este usuario.\n"; return; }
 
-    if (!miLista) {
-        cout << "No se encontró una lista de favoritos para este usuario.\n";
-        return;
-    }
-
+    // 2) Tomar solo punteros válidos
     cancion** fav = miLista->getLista();
     int tam = miLista->getTamLista();
-    if (!fav || tam <= 0) {
-        cout << "Tu lista de favoritos está vacía.\n";
-        return;
-    }
+    if (!fav || tam <= 0) { cout << "Tu lista de favoritos está vacía.\n"; return; }
 
-    // Contar cuántas canciones reales hay
     int validos = 0;
-    for (int i = 0; i < tam; ++i)
-        if (fav[i]) ++validos;
-
+    for (int i = 0; i < tam; ++i) {
+        if (fav[i]) ++validos;}
     if (validos == 0) {
-        cout << "Tu lista no contiene canciones válidas.\n";
-        return;
-    }
+        cout << "Tu lista no contiene canciones válidas.\n"; return; }
+
+    // 3) Compactar índices válidos
     int* idxs = new int[validos];
+    registrarMemoria<int>(validos);
     int p = 0;
     for (int i = 0; i < tam; ++i) {
-        if (fav[i]) idxs[p++] = i;
-    }
+        if (fav[i]) idxs[p++] = i;}
 
-    // 4) Iterar sobre mi lista de favoritos (secuencial)
-    cout << "\n=== Mi lista de favoritos (" << validos << " canciones) ===\n";
-    for (int k = 0; k < validos; ++k) {
-        cancion* c = fav[idxs[k]];
-        auto meta = resolverMetaDesdeIdCancion(c->getId_Cancion(), albumnes, totalAlbumnes, artistas, totalArtistas);
-        if (meta.ok()){
-            cout << "Cantante: " << meta.nombreArtista << "\n";
-            cout << "Album: "   << meta.nombreAlbum  << "\n";
-            cout << "Ruta a la portada del album: " << meta.rutaPortada   << "\n\n";
+    // 4) Reproducción secuencial con controles: N (siguiente), P (previa, hasta M=6), S (salir)
+    const int M_PREV = 6;     // límite de retroceso
+    int cursor = 0;           // apunta al índice en idxs[] que estamos reproduciendo
+    bool salir = false;
+
+    cout << "\n=== Mi lista de favoritos (SECUENCIAL) ===\n";
+    while (!salir) {
+        // Seguridad
+        if (cursor < 0) cursor = 0;
+        if (cursor >= validos) cursor = validos - 1;
+
+        cancion* c = fav[ idxs[cursor] ];
+        if (c) {
+            // Resuelve meta (ya definida en utilidades.cpp)
+            auto meta = resolverMetaDesdeIdCancion(c->getId_Cancion(),
+                                                   albumnes, totalAlbumnes,
+                                                   artistas, totalArtistas);
+            cout << "======== Reproduciendo ========\n";
+            if (meta.ok()) {
+                cout << "Cantante: " << meta.nombreArtista << "\n";
+                cout << "Album:   " << meta.nombreAlbum   << "\n";
+                cout << "Portada: " << meta.rutaPortada   << "\n";
+            }
+            cout << "Titulo:  " << c->getNombreCancion() << "\n";
+            // Premium → 320, Estándar → 128 (por si llamas esto desde estándar)
+            const string& rutaAudio = (user->getMembresia() == "premium") ? c->getRuta320() : c->getRuta128();
+            cout << "Ruta:    " << rutaAudio << "\n";
+            cout << "Duracion:" << c->getDuracion() << "\n\n";
         }
-        cout << "Titulo de la cancion reproducida: " << c->getNombreCancion() << endl;
-        cout << "Ruta al archivo de audio: " << c->getRuta320() << "\n\n";
-        cout << "Duracion:"<< c->getDuracion()<< "\n\n";
-        this_thread::sleep_for(chrono::seconds(5));
-        cout<< "1. Reproducir \n";
-        cout << "2. Detener \n";
+
+        // Mostrar controles
+        cout << "[N] siguiente   [P] previa   [S] salir\n";
+        // Si hay un \n pendiente en el buffer, límpialo
+        if (cin.peek()=='\n') cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        char op = 0;
+        cin >> op;
+
+        if (op=='S' || op=='s') {
+            salir = true;
+        } else if (op=='N' || op=='n') {
+            if (cursor + 1 < validos) {
+                ++cursor;
+            } else {
+                cout << "(Fin de la lista)\n";
+            }
+        } else if (op=='P' || op=='p') {
+            // Puedes retroceder hasta M_PREV canciones, o hasta el inicio si hay menos
+            int maxRetrocedibles = (cursor < M_PREV) ? cursor : M_PREV;
+            if (maxRetrocedibles > 0) {
+                --cursor;
+            } else {
+                cout << "(No hay previa o alcanzaste el límite de " << M_PREV << ")\n";
+            }
+        } else {
+            // Cualquier otra tecla => tratamos como 'N'
+            if (cursor + 1 < validos) ++cursor;
+            else cout << "(Fin de la lista)\n";
+        }
     }
 
     delete [] idxs;
+    cout << "[INFO] Fin del recorrido de tu lista de favoritos.\n";
+}
 
-    cout << "Fin del recorrido de tu lista de favoritos.\n";
 
+// --- Reproducción aleatoria de mi lista (PREMIUM) ---
+// Versión con buffer circular de 6 punteros (sin guardar toda la secuencia),
+// evitando escoger como "siguiente" cualquiera de las 6 últimas canciones.
+void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
+                                              lista_favoritos** listas, int totalListas,
+                                              album** albumnes, int totalAlbumnes,
+                                              artista** artistas, int totalArtistas)
+{
+    // 0) Validaciones y restricción de premium
+    if (!user || !listas || totalListas <= 0) { cout << "No hay listas de favoritos cargadas.\n"; return; }
+    if (user->getMembresia() != "premium") { cout << "(Solo disponible para usuarios premium)\n"; return; }
+
+    // 1) Localizar mi lista por nickname
+    lista_favoritos* miLista = 0;
+    const string nick = user->getNickname();
+    for (int i = 0; i < totalListas; ++i) {
+        if (listas[i] && listas[i]->getNicknameSeguidor() == nick) { miLista = listas[i]; break; }
+    }
+    if (!miLista || miLista->getTamLista() <= 0) { cout << "Tu lista de favoritos está vacía.\n"; return; }
+
+    // 2) Fuente y conteo de válidos (sin STL)
+    cancion** fav = miLista->getLista();
+    const int tam = miLista->getTamLista();
+    int validos = 0; for (int i=0;i<tam;++i) if (fav[i]) ++validos;
+    if (validos <= 0) { cout << "Tu lista no contiene canciones válidas.\n"; return; }
+
+    // 3) Buffer circular de ÚLTIMAS 6 canciones (punteros)
+    const int MAX_HIST = 6;                    // M=6 (según enunciado)
+    cancion* hist[MAX_HIST];                   // almacena PUNTEROS a canciones
+    int histSize = 0;                          // tamaño lógico del historial
+    int histPos  = -1;                         // posición del elemento "actual" en el anillo
+    for (int i=0;i<MAX_HIST;++i) hist[i] = 0;  // limpia
+
+    auto estaEnHist = [&](cancion* x)->bool {
+        for (int i=0;i<histSize;++i) { if (hist[i] && hist[i]==x) return true; }
+        return false;
+    };
+
+    // 4) Elegir SIGUIENTE índice aleatorio evitando las 6 más recientes
+    auto escogerSiguiente = [&](cancion* actual)->int {
+        if (validos == 0) return -1;
+        if (validos == 1) {            // solo hay una canción válida
+            for (int i=0;i<tam;++i) if (fav[i]) return i;
+            return -1;
+        }
+
+        // Intentar varias veces no chocar con el historial reciente
+        int elegido = -1;
+        for (int intentos=0; intentos<64; ++intentos) {
+            int r = randEnRango(0, tam-1);                 // helper ya definido en utilidades.cpp
+            cancion* c = fav[r];
+            if (!c) continue;
+            if (c == actual) continue;                     // evita repetición inmediata
+            if (!estaEnHist(c)) { elegido = r; break; }    // evita cualquiera de las últimas 6
+        }
+
+        // Fallback 1: si todos los intentos chocaron, elegir cualquiera distinta a la actual
+        if (elegido < 0) {
+            for (int i=0;i<tam;++i) { if (fav[i] && fav[i]!=actual) { elegido = i; break; } }
+        }
+        // Fallback 2: si no hay distinta (tam==1), dar la única válida
+        if (elegido < 0) {
+            for (int i=0;i<tam;++i) if (fav[i]) { elegido = i; break; }
+        }
+        return elegido;
+    };
+
+    // 5) Arranque: escoge primera
+    int idxActual = escogerSiguiente(nullptr);
+    if (idxActual < 0) { cout << "No hay canción válida para reproducir.\n"; return; }
+
+    bool repetir   = false;   // repetir indefinidamente la canción actual
+    bool salir     = false;   // detener reproducción
+    int pasosPrev  = 0;       // cuántas "previas" seguidas llevamos (máx 6)
+
+    cout << "\n=== Mis favoritos (modo ALEATORIO - PREMIUM) ===\n";
+    while (!salir) {
+        cancion* c = fav[idxActual];
+        if (c) {
+            // 5.a) Mostrar meta + 320 kbps (premium)
+            auto meta = resolverMetaDesdeIdCancion(c->getId_Cancion(), albumnes, totalAlbumnes, artistas, totalArtistas);
+            cout << "======== Reproduciendo ========\n";
+            if (meta.ok()){
+                cout << "Cantante: " << meta.nombreArtista << "\n";
+                cout << "Album:   " << meta.nombreAlbum   << "\n";
+                cout << "Portada: " << meta.rutaPortada   << "\n";
+            }
+            cout << "Titulo:  " << c->getNombreCancion() << "\n";
+            cout << "Ruta:    " << c->getRuta320()       << "\n";
+            cout << "Duracion:" << c->getDuracion()      << "\n\n";
+        }
+
+        // 5.b) Registrar en historial SOLO si no estamos en modo repetir
+        if (!repetir) {
+            histPos = (histPos + 1) % MAX_HIST;
+            hist[histPos] = c;                          // guarda puntero
+            if (histSize < MAX_HIST) ++histSize;        // crece hasta 6 y luego recicla
+            pasosPrev = 0;                              // al avanzar, resetea retrocesos
+        }
+
+        // 5.c) Controles (auto-siguiente tras 3s)
+        cout << "[N] siguiente  [P] previa  [R] repetir:" << (repetir?"ON":"OFF") << "  [S] salir\n";
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        char op = 0;
+        if (cin.peek()!='\n') cin >> op;
+        if (cin.peek()=='\n') cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if (op=='S' || op=='s') { salir = true; break; }
+        else if (op=='R' || op=='r') { repetir = !repetir; continue; }
+        else if (op=='P' || op=='p') {
+            // 6) PREVIA: retroceder hasta M=6 (o hasta agotar historial real)
+            if (histSize > 1 && pasosPrev < (histSize - 1) && pasosPrev < (MAX_HIST - 1)) {
+                // movernos una posición "hacia atrás" en el anillo
+                histPos = (histPos - 1 + MAX_HIST) % MAX_HIST;
+                cancion* previa = hist[histPos];
+                // ubicar el índice de esa canción en 'fav' por igualdad de puntero
+                int found = -1;
+                for (int i=0;i<tam;++i) { if (fav[i] == previa) { found = i; break; } }
+                if (found >= 0) idxActual = found;
+                ++pasosPrev;
+                repetir = false;           // salir de repetir si estaba activado
+                continue;                  // volver a imprimir esa "previa"
+            } else {
+                cout << "(No hay previa o ya alcanzaste el limite de 6)\n";
+                // no cambiamos nada, seguimos con la actual / o pasamos a N abajo
+            }
+        }
+
+        // 7) Siguiente (N o Enter): elegir aleatoria evitando historial reciente
+        repetir = false;                    // al pasar, repetir queda OFF
+        {
+            cancion* actual = (histSize > 0 ? hist[histPos] : nullptr);
+            int nextIdx = escogerSiguiente(actual);
+            if (nextIdx >= 0) idxActual = nextIdx;
+            // Si por alguna razón no se encontró, se quita el continue y se reintenta en la próxima iteración
+        }
+    }
+
+    cout << "[INFO] Fin de favoritos (aleatorio premium).\n";
 }
 
 
@@ -684,9 +851,18 @@ void mostrarMenuPremium(usuario* usuarioActual,usuario** usuarios, int totalUsua
 
                 }
                 else if (opc_2 == 3) {
+                    cout << "\n--- Ejecutar mis favoritos ---\n";
+                    cout << "1. Secuencial\n";
+                    cout << "2. Aleatoria (premium)\n";
+                    int modo = validad_entero(1, 2);  // ya existente en utilidades.cpp
 
-                    // Ejecutar mi lista de favoritos secuencial
-                    ejecutarMiListaFavoritosSecuencial(usuarioActual, listadefavoritos, totalListas, albumnes, totalAlbumnes, artistas,totalArtistas);
+                    if (modo == 1) {
+                        ejecutarMiListaFavoritosSecuencial(usuarioActual, listadefavoritos, totalListas,
+                                                           albumnes, totalAlbumnes, artistas, totalArtistas);
+                    } else {
+                        ejecutarMiListaFavoritosAleatorioPremium(usuarioActual, listadefavoritos, totalListas,
+                                                                 albumnes, totalAlbumnes, artistas, totalArtistas);
+                    }
                 }
                 else { // opc_2 == 4
                     volverFavs = true;

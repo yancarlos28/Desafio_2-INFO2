@@ -134,6 +134,7 @@ void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
     if (cap <= 0) cap = 1;
 
     cancion** vistos = new cancion*[cap];
+    registrarMemoria<cancion>(cap);
     int nVistos = 0;
 
     // Helper local: ¿ya vimos este ID?
@@ -168,4 +169,5 @@ void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
     }
 
     delete[] vistos;
+    liberarMemoria<cancion>(cap);
 }

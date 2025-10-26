@@ -20,8 +20,13 @@ lista_favoritos::lista_favoritos(const string& id_usuario, const string& id_canc
 
     // contar IDs separados por ';'
     int cantidad = 1;
-    for (size_t i = 0; i < id_canciones.size(); i++)
-        if (id_canciones[i] == ';') ++cantidad;
+    for (size_t i = 0; i < id_canciones.size(); i++) {
+        char caracter = id_canciones[i];
+        if (caracter == ';') {
+            ++cantidad;
+        }
+        incrementarIteraciones();
+    }
 
     tam_lista = cantidad;                // ← GUARDAMOS el tamaño
     lista_favorito = new cancion*[tam_lista];
@@ -74,27 +79,36 @@ static cancion* encontrarCancionporID(cancion** canciones, int total, const stri
         if (canciones[i] && canciones[i]->getId_Cancion() == idTxt){
             return canciones[i];
         }
+        incrementarIteraciones();
     }
     return 0;
 }
+
+
 // Compactar: deja solo punteros válidos y ajusta tam_lista
 static void compactarLista(cancion**& arr, int& tam_lista) {
     int cnt = 0;
     for (int i = 0; i < tam_lista; ++i) if (arr[i]) ++cnt;
 
     cancion** nuevo = (cnt > 0) ? new cancion*[cnt] : 0;
+    registrarMemoria<cancion>(cnt);
     int j = 0;
     for (int i = 0; i < tam_lista; ++i) if (arr[i]) nuevo[j++] = arr[i];
 
-    if (arr) delete [] arr;
+    if (arr != nullptr) {
+        delete[] arr;
+        liberarMemoria<cancion>(cnt);
+        arr = nullptr;
+    }
     arr = nuevo;
     tam_lista = cnt;
 }
 
+
 // Enlazar desde id_canciones: "100010101;100020202;100030303"
 void lista_favoritos::enlazarDesdeCadena(const string& id_canciones,
-                                         cancion** canciones, int totalCanciones)
-{
+                                         cancion** canciones, int totalCanciones){
+
     if (!lista_favorito || tam_lista <= 0) return;
 
     int pos = 0;
@@ -121,9 +135,10 @@ void lista_favoritos::enlazarDesdeCadena(const string& id_canciones,
         if (ptr) lista_favorito[pos++] = ptr;
     }
 
-    // 🧹 Compacta: quita nulos y ajusta tam_lista
+    // Compacta: quita nulos y ajusta tam_lista
     compactarLista(lista_favorito, tam_lista);
 }
+
 
 // Agregar por ID SIN huecos (realloc exacto +1)
 bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
@@ -145,10 +160,14 @@ bool lista_favoritos::agregarPorIdTexto(const string &idTxt,
 
     // 4) Redimensionar exacto +1 y appendea
     cancion** nuevo = new cancion*[tam_lista + 1];
+    registrarMemoria<cancion>(1);
     for (int i = 0; i < tam_lista; ++i) nuevo[i] = lista_favorito[i];
     nuevo[tam_lista] = ptr;
 
-    if (lista_favorito) delete [] lista_favorito;
+    if (lista_favorito != nullptr) {
+        delete [] lista_favorito;
+        liberarMemoria<cancion>(tam_lista);
+    }
     lista_favorito = nuevo;
     tam_lista += 1;
 
@@ -171,6 +190,7 @@ bool lista_favoritos::eliminarPorIdTexto(const string& idTxt)
 
     // 2) crear nuevo arreglo exacto (tam_lista-1) copiando todo excepto pos
     cancion** nuevo = (tam_lista - 1 > 0) ? new cancion*[tam_lista - 1] : 0;
+    registrarMemoria<cancion>(tam_lista - 1);
     for (int i = 0, j = 0; i < tam_lista; ++i) {
         if (i == pos) continue;
         nuevo[j++] = lista_favorito[i];
@@ -178,6 +198,7 @@ bool lista_favoritos::eliminarPorIdTexto(const string& idTxt)
 
     // 3) reemplazar arreglo y actualizar tamaño lógico
     delete [] lista_favorito;
+    liberarMemoria<cancion>(tam_lista);
     lista_favorito = nuevo;
     tam_lista -= 1;
 
