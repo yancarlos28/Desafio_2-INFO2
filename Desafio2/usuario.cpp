@@ -93,7 +93,7 @@ const string& usuario::getMembresia() const {
 const string& usuario::getNicknameAseguir() const {
     return nicknameAseguir;
 }
-/*
+
 const string& usuario::getCiudad() const {
     return ciudadUsuario;
 }
@@ -105,7 +105,10 @@ const string& usuario::getPais() const {
 const string& usuario::getFecha() const {
     return fechaInscripcion;
 }
-*/
+void usuario::setNicknameAseguir(const string& nick) {
+    nicknameAseguir = nick;
+}
+
 //Implementaciones
 
 bool usuario::seguir_listafavorita(lista_favoritos* lista_aSeguir)

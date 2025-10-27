@@ -49,9 +49,14 @@ public:
     void dejar_seguir();
     void recorrerFavoritosFusion(void (*visitor)(cancion*)) const;
 
+    // usuario.h  (añadir en public:)
+    const string& getCiudad() const;
+    const string& getPais() const;
+    const string& getFecha() const;
 
-    // Configurar capacidades de historiales (por defecto 4 y 6)
-    //void configurarHistoriales(int capAleatorio = 4, int capFav = 6);
+    // Necesario para persistir "a quién sigo"
+    void setNicknameAseguir(const string& nick);
+
 
 
 };

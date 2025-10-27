@@ -36,28 +36,28 @@ int main()
     // 2) LOGIN + MENU
 
     flujoLoginYMenu(canciones, totalCanciones, usuarios, totalUsuarios, listas, totalListas, anuncios, totalAnuncios, albumes, totalAlbumnes, artistas, totalArtistas);
-    cout << "\n=== Métricas antes de liberar ===\n";
+    //cout << "\n=== Métricas antes de liberar ===\n";
     mostrarUsoMemoria();
 
     liberarArregloDePunteros(listas, totalListas);
-    cout << "[Tras liberar listas] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar listas] "; mostrarUsoMemoria();
 
     liberarArregloDePunteros(usuarios, totalUsuarios);
-    cout << "[Tras liberar usuarios] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar usuarios] "; mostrarUsoMemoria();
 
     liberarArregloDePunteros(canciones, totalCanciones);
-    cout << "[Tras liberar canciones] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar canciones] "; mostrarUsoMemoria();
 
     liberarArregloDePunteros(albumes, totalAlbumnes);
-    cout << "[Tras liberar albumes] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar albumes] "; mostrarUsoMemoria();
 
     liberarArregloDePunteros(artistas, totalArtistas);
-    cout << "[Tras liberar artistas] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar artistas] "; mostrarUsoMemoria();
 
     liberarArregloDePunteros(anuncios, totalAnuncios);
-    cout << "[Tras liberar anuncios] "; mostrarUsoMemoria();
+    //cout << "[Tras liberar anuncios] "; mostrarUsoMemoria();
 
-    cout << "\n=== Métricas tras liberar todo ===\n";
+    //cout << "\n=== Métricas tras liberar todo ===\n";
     mostrarUsoMemoria();
 
     return 0;

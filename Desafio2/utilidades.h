@@ -29,7 +29,7 @@ bool seguirListaFavoritosPorNickname(usuario** usuarios, int totalUsuarios,
                                      usuario* seguidor, const string& nickObjetivo);
 
 
-void dejarDeSeguirLista(usuario* seguidor);
+void dejarDeSeguirLista(usuario* seguidor, usuario **usuarios, int totalUsuarios);
 
 // Imprime (o reproduce) la "vista fusionada" (propia + seguida) sin duplicados.
 void imprimirFavoritosFusion(usuario* u);
@@ -56,8 +56,18 @@ void mostrarMenuEstandar(usuario* usuarioActual, int totalUsuarios,
 void mostrarMenuPremium(usuario* usuarioActual, usuario **usuarios, int totalUsuarios, cancion**& canciones, int& totalCanciones,
                         lista_favoritos**& listadefavoritos, int& totalListas, album **albumnes, int totalAlbumnes, artista **artistas, int totalArtistas, anuncio **&anuncios, int &totalAnuncios);
 
-void ejecutarMiListaFavoritosSecuencial(usuario* user,lista_favoritos** listas,int totalListas);
-void editarMiListaFavoritosAleatorio(usuario* user, lista_favoritos** listas ,int totalListas);
+void ejecutarMiListaFavoritosSecuencial(usuario* user,
+                                        lista_favoritos** listas, int totalListas,
+                                        album** albumnes, int totalAlbumnes,
+                                        artista** artistas, int totalArtistas);
+
+void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
+                                              lista_favoritos** listas, int totalListas,
+                                              album** albumnes, int totalAlbumnes,
+                                              artista** artistas, int totalArtistas);
+
+// utilidades.h
+bool guardarUsuarios(usuario** usuarios, int totalUsuarios, const std::string& ruta = "usuarios.txt");
 
 
 #endif // UTILIDADES_H

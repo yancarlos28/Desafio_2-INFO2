@@ -4,12 +4,14 @@
 #include "album.h"
 #include "artista.h"
 #include "utilidades.h"
+#include "lista_favoritos.h"
 #include <chrono>
 #include <limits>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <thread>
+#include <fstream>
 using namespace std;
 
 /**Definicion de variables globales para almacenar memoria
@@ -18,7 +20,7 @@ using namespace std;
 int contadorIteracionesGlobal = 0;
 size_t memoriaReservadaGlobal = 0;
 
-/* LOGIN, BUSQUEDA Y VALIDACION-----------
+/*BUSQUEDA Y VALIDACION-----------
  */
 
 usuario* buscarUsuarioPorNickname(usuario** usuarios, int totalUsuarios, const string& nick) {
@@ -42,35 +44,6 @@ lista_favoritos* buscarListaDeFavoritos(const usuario* u,
     return nullptr;
 }
 
-bool seguirListaFavoritosPorNickname(usuario** usuarios, int totalUsuarios,
-                                     lista_favoritos** listas, int totalListas,
-                                     usuario* seguidor, const string& nickObjetivo)
-{
-    if (!seguidor) { cout << "[ERROR] No hay usuario seguidor.\n"; return false; }
-
-    usuario* objetivo = buscarUsuarioPorNickname(usuarios, totalUsuarios, nickObjetivo);
-    if (!objetivo) { cout << "[ERROR] No existe el usuario: " << nickObjetivo << "\n"; return false; }
-    if (objetivo == seguidor) { cout << "[WARN] No puedes seguir tu propia lista.\n"; return false; }
-
-    //  CLAVE: buscar en el ARREGLO DE LISTAS por nickname
-    lista_favoritos* listaObjetivo = buscarListaDeFavoritos(objetivo, listas, totalListas);
-    if (!listaObjetivo) {
-        cout << "[ERROR] El usuario objetivo no tiene lista de favoritos.\n";
-        return false;
-    }
-
-    if (seguidor->seguir_listafavorita(listaObjetivo)) {
-        cout << "[OK] Ahora sigues la lista de " << nickObjetivo << ".\n";
-        return true;
-    } else {
-        cout << "[INFO] Ya seguías esa lista.\n";
-        return false;
-    }
-}
-
-
-
-// verificar si un ID de canción existe en el catálogo
 static bool existeCancionId(cancion** canciones, int total, const string& idTxt) {
     if (!canciones || total <= 0) return false;
     for (int i = 0; i < total; ++i) {
@@ -78,12 +51,7 @@ static bool existeCancionId(cancion** canciones, int total, const string& idTxt)
     }
     return false;
 }
-string idArtistaDeCancion(const std::string& id9){
-    return (id9.size() >= 5) ? id9.substr(0,5) : "";
-}
-string idAlbum7DeCancion(const std::string& id9){
-    return (id9.size() >= 7) ? id9.substr(0,7) : "";
-}
+
 
 const album* buscarAlbumPorId7(album** albumnes, int totalAlb, const string& id7){
     if(!albumnes) return nullptr;
@@ -102,6 +70,55 @@ const artista* buscarArtistaPorId5(artista** artistas, int totalArt, const strin
     }
     return nullptr;
 }
+
+
+int validad_entero(int min, int max) {
+    int opcion;
+    bool valido = false;
+
+    while (!valido) {
+        cout << "Ingrese una opcion (" << min << "-" << max << "): ";
+        cin >> opcion;
+
+        if (cin.fail() || opcion < min || opcion > max) {
+            cout << "Entrada invalida. Por favor, ingrese un numero entre "
+                 << min << " y " << max << ".\n";
+
+            // limpiar el estado del flujo
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            valido = true;
+        }
+    }
+
+    return opcion;
+}
+
+static int randEnRango(int minimo, int maximo) {
+    static bool seeded = false;
+    if (!seeded) { srand((unsigned)time(0)); seeded = true; }
+    if (maximo < minimo) return minimo;                 // guardia
+    return minimo + rand() % (maximo - minimo + 1);
+}
+
+//para sacar id del artista en base al id de la cancion
+string copiarPrimeros5(const string& original) {
+    return original.substr(0, 5);
+}
+
+//para sacar id del album en base al id de la cancion
+string copiarPrimeros7(const string& original) {
+    return original.substr(0, 7);
+}
+
+string idArtistaDeCancion(const std::string& id9){
+    return (id9.size() >= 5) ? id9.substr(0,5) : "";
+}
+string idAlbum7DeCancion(const std::string& id9){
+    return (id9.size() >= 7) ? id9.substr(0,7) : "";
+}
+
 struct MetaDeCancion {
     string nombreAlbum;
     string rutaPortada;
@@ -134,7 +151,7 @@ MetaDeCancion resolverMetaDesdeIdCancion(
 }
 
 
-// Flujo de login + enrutamiento a menú
+// Flujo de login y menu
 void flujoLoginYMenu(
     cancion**& canciones, int& totalCanciones,
     usuario**& usuarios, int& totalUsuarios,
@@ -179,82 +196,7 @@ void flujoLoginYMenu(
     cout << "================\n";
 }
 
-// =====================
-// MENU USUARIO ESTÁNDAR
-// =====================
-
-int validad_entero(int min, int max) {
-    int opcion;
-    bool valido = false;
-
-    while (!valido) {
-        cout << "Ingrese una opcion (" << min << "-" << max << "): ";
-        cin >> opcion;
-
-        if (cin.fail() || opcion < min || opcion > max) {
-            cout << "Entrada invalida. Por favor, ingrese un numero entre "
-                 << min << " y " << max << ".\n";
-
-            // limpiar el estado del flujo
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
-            valido = true;
-        }
-    }
-
-    return opcion;
-}
-
-//generar numero aleatorio
-
-static int randEnRango(int minimo, int maximo) {
-    static bool seeded = false;
-    if (!seeded) { srand((unsigned)time(0)); seeded = true; }
-    if (maximo < minimo) return minimo;                 // guardia
-    return minimo + rand() % (maximo - minimo + 1);
-}
-
-int generarNumeroAleatorioUnico(int minimo, int maximo) {
-    static bool inicializado = false;
-    static int usados[100000];   // almacena los números ya usados
-    static int cantidadUsados = 0;
-
-    if (!inicializado) {
-        srand(time(0));
-        for (int i = 0; i < 100000; i++) usados[i] = -1;
-        inicializado = true;
-    }
-
-    if (cantidadUsados >= (maximo - minimo + 1))
-        return -1; // ya se usaron todos los posibles
-
-    int num;
-    bool repetido;
-    do {
-        repetido = false;
-        num = minimo + rand() % (maximo - minimo + 1);
-        for (int i = 0; i < cantidadUsados; i++) {
-            if (usados[i] == num) {
-                repetido = true;
-                break;
-            }
-        }
-    } while (repetido);
-
-    usados[cantidadUsados++] = num;
-    return num;
-}
-
-//para sacar id del artista en base al id de la cancion
-string copiarPrimeros5(const string& original) {
-    return original.substr(0, 5);
-}
-
-//para sacar id del album en base al id de la cancion
-string copiarPrimeros7(const string& original) {
-    return original.substr(0, 7);
-}
+// ------------- REPRODUCCION -----------
 void reproducirCancion(usuario* user,
                        cancion** canciones,
                        int totalCanciones,
@@ -325,117 +267,83 @@ void reproducirCancion(usuario* user,
 
 void mostrarAnuncio(anuncio**& anuncios, int& totalAnuncios)
 {
-    // Evitar crashes si no hay anuncios
     if (!anuncios || totalAnuncios <= 0) return;
 
     // No repetir el mismo consecutivamente
-    static anuncio* ptrAnuncioAnterior = nullptr;
-    anuncio* ptrAnuncioActual = nullptr;
+    static anuncio* anuncioAnterior = nullptr;
+    anuncio* anuncioActual = nullptr;
 
-    // Contar cuántos hay por categoría
-    int cantidadC = 0;
-    int cantidadB = 0;
-    int cantidadAAA = 0;
+    // Contar cuántos anuncios hay por categoría
+    int totalTipoC = 0;
+    int totalTipoB = 0;
+    int totalTipoAAA = 0;
 
     for (int i = 0; i < totalAnuncios; ++i) {
-        anuncio* ptrAnuncio = anuncios[i];
-        if (!ptrAnuncio) continue;
-        const string& tipo = ptrAnuncio->getTipo_Anuncio();
-        if (tipo == "C") ++cantidadC;
-        else if (tipo == "B") ++cantidadB;
-        else /* "AAA" u otro */ ++cantidadAAA;
-        incrementarIteraciones();
+        anuncio* a = anuncios[i];
+        if (!a) continue;
+
+        const string& tipo = a->getTipo_Anuncio();
+        if (tipo == "C") ++totalTipoC;
+        else if (tipo == "B") ++totalTipoB;
+        else ++totalTipoAAA;
     }
 
-    // Random simple (no-único) local y seguro
-    auto randEnRango = [](int minimo, int maximo)->int {
-        static bool seeded = false;
-        if (!seeded) { srand((unsigned)time(0)); seeded = true; }
-        if (maximo < minimo) return minimo;
-        return minimo + rand() % (maximo - minimo + 1);
+    // Elegir categoría según prioridad 1:2:3 (C:B:AAA)
+    auto elegirCategoria = [&]() -> char {
+        int dado = randEnRango(1, 6);  // 1–6 para proporción 1:2:3
+        if (dado == 1) return 'C';         // 1/6 ≈ 16.7 %
+        else if (dado <= 3) return 'B';    // 2/6 ≈ 33.3 %
+        else return 'A';                   // 3/6 ≈ 50 %
     };
 
-    // Elegir categoría ponderada: C(10), B(20), AAA(30) => total 60
-    auto elegirCategoria = [&]()->char {
-        int r = randEnRango(1, 60);
-        if (r <= 10) return 'C';
-        if (r <= 30) return 'B';   // (11..30)
-        return 'A';                // (31..60) = AAA
-    };
+    char categoriaSeleccionada = elegirCategoria();
 
-    // Elegir 1 anuncio de la categoría dada SIN crear arreglos auxiliares
-    auto pickDeCategoria = [&](char cat)->anuncio* {
-        // 1) contar cuántos de esa categoría hay
-        int count = 0;
-        for (int i = 0; i < totalAnuncios; ++i) {
-            anuncio* a = anuncios[i];
-            if (!a) continue;
-            const string& t = a->getTipo_Anuncio();
-            bool ok = (cat=='C' && t=="C") ||
-                      (cat=='B' && t=="B") ||
-                      (cat=='A' && (t=="AAA" || (t!="B" && t!="C")));
-            if (ok) ++count;
-            incrementarIteraciones();
+    // Seleccionar un anuncio aleatorio de la categoría elegida
+    for (int intentos = 0; intentos < 10 && !anuncioActual; ++intentos) {
+        int indiceAleatorio = randEnRango(0, totalAnuncios - 1);
+        anuncio* candidato = anuncios[indiceAleatorio];
+        if (!candidato) continue;
+
+        const std::string& tipo = candidato->getTipo_Anuncio();
+        bool coincideCategoria =
+            (categoriaSeleccionada == 'C' && tipo == "C") ||
+            (categoriaSeleccionada == 'B' && tipo == "B") ||
+            (categoriaSeleccionada == 'A' && tipo == "AAA");
+
+        // Evitar repetir el mismo anuncio consecutivamente
+        if (coincideCategoria && candidato != anuncioAnterior) {
+            anuncioActual = candidato;
         }
-        if (count == 0) return nullptr;
+    }
 
-        // 2) elegir el k-ésimo válido al azar
-        int k = randEnRango(0, count - 1);
+    // Si no se encontró con los intentos aleatorios, buscar secuencialmente
+    if (!anuncioActual) {
         for (int i = 0; i < totalAnuncios; ++i) {
-            anuncio* a = anuncios[i];
-            if (!a) continue;
-            const string& t = a->getTipo_Anuncio();
-            bool ok = (cat=='C' && t=="C") ||
-                      (cat=='B' && t=="B") ||
-                      (cat=='A' && (t=="AAA" || (t!="B" && t!="C")));
-            if (ok) {
-                if (k == 0) return a;
-                --k;
+            anuncio* candidato = anuncios[i];
+            if (!candidato) continue;
+
+            const std::string& tipo = candidato->getTipo_Anuncio();
+            bool coincideCategoria =
+                (categoriaSeleccionada == 'C' && tipo == "C") ||
+                (categoriaSeleccionada == 'B' && tipo == "B") ||
+                (categoriaSeleccionada == 'A' && tipo == "AAA");
+
+            if (coincideCategoria && candidato != anuncioAnterior) {
+                anuncioActual = candidato;
+                break;
             }
-            incrementarIteraciones();
         }
-        return nullptr;
-    };
-
-    // ¿Cuántos anuncios válidos hay en total? (para el caso límite de 1)
-    int totalValidos = 0;
-    for (int i = 0; i < totalAnuncios; ++i) if (anuncios[i]) ++totalValidos;
-
-    // Intentar elegir uno que NO sea igual al anterior (si hay más de 1)
-    for (int intentos = 0; intentos < 20; ++intentos) {
-        char cat = elegirCategoria();
-        ptrAnuncioActual = pickDeCategoria(cat);
-
-        // Fallback si la categoría quedó vacía
-        if (!ptrAnuncioActual) {
-            if (cantidadAAA) ptrAnuncioActual = pickDeCategoria('A');
-            if (!ptrAnuncioActual && cantidadB)  ptrAnuncioActual = pickDeCategoria('B');
-            if (!ptrAnuncioActual && cantidadC)  ptrAnuncioActual = pickDeCategoria('C');
-        }
-
-        // Si no hay ninguno, salir
-        if (!ptrAnuncioActual) break;
-
-        // Si sólo hay 1 anuncio total, no hay forma de evitar repetición
-        if (totalValidos <= 1) break;
-
-        // Evitar repetición consecutiva
-        if (ptrAnuncioActual != ptrAnuncioAnterior) break;
     }
 
-    if (!ptrAnuncioActual) return; // no hay nada que mostrar
-
-    // Mostrar categoría + mensaje y recordar
-    {
-        const string& tipo = ptrAnuncioActual->getTipo_Anuncio();
-        const char* etiqueta = (tipo == "C") ? "C"
-                               : (tipo == "B") ? "B"
-                                               : "AAA";
-        cout << "[Categoria anuncio: " << etiqueta << "] " << ptrAnuncioActual->getMensaje() << "\n";
+    // Mostrar anuncio elegido
+    if (anuncioActual) {
+        cout << "\n--- ANUNCIO ---\n";
+        cout << "[" << anuncioActual->getTipo_Anuncio() << "] "
+                  << anuncioActual->getMensaje() << "\n";
+        anuncioAnterior = anuncioActual;
     }
-    ptrAnuncioAnterior = ptrAnuncioActual;
-
 }
+
 
 
 void reproduccionAleatoria(usuario* user,
@@ -500,57 +408,177 @@ void reproduccionAleatoria(usuario* user,
         return;
     }
 
-    // ===== Premium (sin anuncios). Puedes dejarlo igual o adaptarlo similar si quieres. =====
-    const int K = 5;
-    for (int i = 0; i < K; ++i) {
-        reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+    // ===== Premium (con controles N/P/R/S y SIN anuncios) =====
+    // Historial “atrás” con límite M_PREV, sin “adelante”. No guardamos posiciones: solo cancion*.
+    {
+
+        cancion** src = canciones;
+        const int tam = totalCanciones;
+
+        // Contar válidos
+        int validos = 0;
+        for (int i = 0; i < tam; ++i) { if (src[i]) ++validos; incrementarIteraciones(); }
+        if (validos <= 0) { cout << "(No hay canciones válidas para reproducir)\n"; return; }
+
+        // Historial atrás (tamaño exacto en cada cambio)
+        const int M_PREV = 6;
+        cancion** pilaAtras = nullptr;
+        int nAtras = 0;
+
+        auto pushAtras = [&](cancion* c){
+            if (!c) return;
+            if (nAtras < M_PREV) {
+                cancion** nuevo = new cancion*[nAtras + 1];
+                registrarMemoria<cancion*>(nAtras + 1);
+                for (int i = 0; i < nAtras; ++i) { nuevo[i] = pilaAtras[i]; incrementarIteraciones(); }
+                nuevo[nAtras] = c;
+                if (pilaAtras) { delete[] pilaAtras; liberarMemoria<cancion*>(nAtras); }
+                pilaAtras = nuevo; nAtras += 1;
+            } else {
+                cancion** nuevo = new cancion*[M_PREV];
+                registrarMemoria<cancion*>(M_PREV);
+                for (int i = 1; i < M_PREV; ++i) { nuevo[i-1] = pilaAtras[i]; incrementarIteraciones(); }
+                nuevo[M_PREV-1] = c;
+                if (pilaAtras) { delete[] pilaAtras; liberarMemoria<cancion*>(M_PREV); }
+                pilaAtras = nuevo; nAtras = M_PREV;
+            }
+        };
+
+        auto popAtras = [&]()->cancion*{
+            if (nAtras == 0) return nullptr;
+            cancion* top = pilaAtras[nAtras-1];
+            if (nAtras-1 > 0) {
+                cancion** nuevo = new cancion*[nAtras - 1];
+                registrarMemoria<cancion*>(nAtras - 1);
+                for (int i = 0; i < nAtras-1; ++i) { nuevo[i] = pilaAtras[i]; incrementarIteraciones(); }
+                delete[] pilaAtras; liberarMemoria<cancion*>(nAtras);
+                pilaAtras = nuevo; nAtras -= 1;
+            } else {
+                delete[] pilaAtras; liberarMemoria<cancion*>(nAtras);
+                pilaAtras = nullptr; nAtras = 0;
+            }
+            return top;
+        };
+
+        auto estaEnHist = [&](cancion* x)->bool {
+            for (int i = 0; i < nAtras; ++i) { if (pilaAtras[i] == x) return true; incrementarIteraciones(); }
+            return false;
+        };
+
+        // Escoger siguiente aleatoria evitando la actual y el historial atrás
+        auto escogerSiguiente = [&](cancion* actual)->int {
+            if (validos == 1) {
+                for (int i = 0; i < tam; ++i) if (src[i]) return i;
+                return -1;
+            }
+            int elegido = -1;
+            for (int intentos = 0; intentos < 64; ++intentos) {
+                int r = randEnRango(0, tam - 1);
+                cancion* c = src[r];
+                if (!c) continue;
+                if (c == actual) continue;
+                if (!estaEnHist(c)) { elegido = r; break; }
+                incrementarIteraciones();
+            }
+            if (elegido < 0) {
+                for (int i = 0; i < tam; ++i) { if (src[i] && src[i] != actual && !estaEnHist(src[i])) { elegido = i; break; } incrementarIteraciones(); }
+            }
+            if (elegido < 0) {
+                for (int i = 0; i < tam; ++i) { if (src[i]) { elegido = i; break; } incrementarIteraciones(); }
+            }
+            return elegido;
+        };
+
+        // Primera canción
+        int idxActual = escogerSiguiente(nullptr);
+        if (idxActual < 0) { cout << "(No hay canción para reproducir)\n"; return; }
+
+        bool repetir = false;
+        bool salir   = false;
+
+        cout << "\n[Premium] Reproducción aleatoria con controles (N/P/R/S)\n";
+        while (!salir) {
+            cancion* c = src[idxActual];
+
+            // ---- Mostrar meta (artista, álbum, portada) en 320 kbps ----
+            {
+                string id = c->getId_Cancion();
+                string id5 = copiarPrimeros5(id);
+                string id7 = copiarPrimeros7(id);
+
+                string artistaNombre = "";
+                string nombreAlbum   = "";
+                string rutaAlbum     = "";
+
+                for (int i = 0; i < totalArtistas; ++i) {
+                    artista* ptrArtista = artistas[i];
+                    if (ptrArtista && ptrArtista->getId_Artista() == id5) { artistaNombre = ptrArtista->getNombre_Artista(); break; }
+                    incrementarIteraciones();
+                }
+                for (int i = 0; i < totalAlbumes; ++i) {
+                    album* ptrAlbum = albumes[i];
+                    if (ptrAlbum && ptrAlbum->getId_Album() == id7) { nombreAlbum = ptrAlbum->getNombre_Album(); rutaAlbum = ptrAlbum->getRuta_Imagen(); break; }
+                    incrementarIteraciones();
+                }
+
+                cout << "======== Reproduciendo ========\n";
+                cout << "Cantante: " << artistaNombre << "\n";
+                cout << "Album:   " << nombreAlbum   << "\n";
+                cout << "Portada: " << rutaAlbum     << "\n";
+                cout << "Titulo:  " << c->getNombreCancion() << "\n";
+                cout << "Ruta:    " << c->getRuta320()       << "\n";
+                cout << "Duracion:" << c->getDuracion()      << "\n\n";
+            }
+            // -------------------------------------------------------------
+
+            cout << "[N] siguiente   [P] previa   [R] repetir:" << (repetir ? "ON" : "OFF") << "   [S] salir\n";
+            this_thread::sleep_for(chrono::seconds(3));
+
+            char op = 0;
+            if (cin.peek()!='\n') cin >> op;
+            if (cin.peek()=='\n') cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            if (op=='S' || op=='s') {
+                salir = true;
+                break;
+            }
+            else if (op=='R' || op=='r') {
+                // Repetir solo alterna flag. No tocamos historial ni índice.
+                repetir = !repetir;
+                continue;
+            }
+            else if (op=='P' || op=='p') {
+                // Retroceder: tomar última reproducida del historial (si hay).
+                cancion* anterior = popAtras();
+                if (anterior) {
+                    int found = -1;
+                    for (int i = 0; i < tam; ++i) { if (src[i] == anterior) { found = i; break; } incrementarIteraciones(); }
+                    if (found >= 0) { idxActual = found; repetir = false; continue; }
+                    else { cout << "(No se pudo ubicar la canción anterior)\n"; }
+                } else {
+                    cout << "(No hay previa)\n";
+                }
+                // Si no había previa o falló, dejaremos que caiga a “siguiente” abajo.
+            }
+
+            // Siguiente (N u otra tecla que no sea R/S/P)
+            if (!repetir) {
+                // ⚠️ Empujar al historial SOLO cuando realmente avanzamos
+                pushAtras(c);
+            }
+            int nextIdx = escogerSiguiente(c);
+            if (nextIdx >= 0) idxActual = nextIdx;
+            incrementarIteraciones();
+        }
+
+        if (pilaAtras) { delete[] pilaAtras; liberarMemoria<cancion*>(nAtras); }
+        cout << "[INFO] Se detuvo la reproducción (premium).\n";
+        return;
     }
-    // Continuo opcional en premium:
-    while (true) {
-        std::cout << "[N] siguiente   [S] detener\n";
-        if (std::cin.peek()=='\n')
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        char op = 0; std::cin >> op;
-        if (op=='S'||op=='s') { std::cout << "Se detuvo la reproduccion.\n"; break; }
-        reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-    }
+
 }
 
 
-
-void mostrarMenuEstandar(usuario* usuarioActual, int totalUsuarios,
-                         cancion**& canciones, int& totalCanciones,
-                         album** albumnes, int totalAlbumnes,
-                         artista** artistas, int totalArtistas,
-                         anuncio**& anuncios,int & totalAnuncios)
-{
-    bool exit = false;
-    while (!exit) {
-        incrementarIteraciones();
-        cout << "------------------------------\n";
-        cout << "MENU USUARIO ESTANDAR\n";
-        cout << "------------------------------\n";
-        cout << "1. Reproduccion aleatoria \n";
-        cout << "2. Volver al menu principal\n";
-
-        int opc = validad_entero(1, 2);
-
-        if (opc == 1) {
-            reproduccionAleatoria(usuarioActual, totalCanciones, canciones, artistas, totalArtistas, albumnes,totalAlbumnes, anuncios, totalAnuncios);
-
-            mostrarUsoMemoria();
-        }
-        else {
-            exit = true;
-        }
-    }
-}
-
-// =====================
-// MENU USUARIO PREMIUM
-// =====================
 
 void ejecutarMiListaFavoritosSecuencial(usuario* user,
                                         lista_favoritos** listas, int totalListas,
@@ -562,7 +590,7 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
         return;
     }
 
-    // 1) Buscar la lista del usuario actual por nickname (igual que tu versión)
+    // 1) Buscar la lista del usuario actual por nickname
     lista_favoritos* miLista = 0;
     const string nick = user->getNickname();
     for (int i = 0; i < totalListas; ++i) {
@@ -570,19 +598,84 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
             miLista = listas[i];
             break;
         }
+        incrementarIteraciones();
     }
     if (!miLista) { cout << "No se encontró una lista de favoritos para este usuario.\n"; return; }
+    // ==== SIEMPRE MODO FUSIONADO ====
+    // Mi lista
+    cancion** arrP = miLista->getLista();
+    int       tamP = miLista->getTamLista();
 
+    // Lista del seguido (si existe)
+    cancion** arrS = nullptr;
+    int       tamS = 0;
+    {
+        const string nickSeguido = user->getNicknameAseguir(); // getter existente
+        if (!nickSeguido.empty()) {
+            // Buscar DIRECTO en 'listas' por nickname (no dependemos de usuarios[])
+            for (int i = 0; i < totalListas; ++i) {
+                if (listas[i] && listas[i]->getNicknameSeguidor() == nickSeguido) {
+                    arrS = listas[i]->getLista();
+                    tamS = listas[i]->getTamLista();
+                    break;
+                }
+                incrementarIteraciones();
+            }
+        }
+    }
+
+    // Si no hay seguida válida, usamos solo la propia
+    cancion** fav = nullptr;
+    int       tam = 0;
+    bool      esFusion = false;
+
+    if (!arrS || tamS <= 0) {
+        fav = arrP; tam = tamP;
+    } else {
+        // Fusión temporal sin duplicados (por ID). Solo punteros; no se replican canciones.
+        int cap = tamP + tamS; if (cap <= 0) cap = 1;
+        cancion** fusion = new cancion*[cap];
+        registrarMemoria<cancion*>(cap);
+        for (int i = 0; i < cap; ++i) fusion[i] = nullptr;
+
+        auto existeId = [&](const string& id)->bool {
+            for (int k = 0; k < cap; ++k) { if (fusion[k] && fusion[k]->getId_Cancion() == id) return true; }
+            return false;
+        };
+
+        int nFusion = 0;
+        // 1) Primero, mis favoritas
+        for (int i = 0; i < tamP; ++i) {
+            cancion* c = (arrP ? arrP[i] : nullptr);
+            if (!c) { incrementarIteraciones(); continue; }
+            const string& id = c->getId_Cancion();
+            if (id.empty() || existeId(id)) { incrementarIteraciones(); continue; }
+            fusion[nFusion++] = c; incrementarIteraciones();
+        }
+        // 2) Luego, las del seguido
+        for (int i = 0; i < tamS; ++i) {
+            cancion* c = (arrS ? arrS[i] : nullptr);
+            if (!c) { incrementarIteraciones(); continue; }
+            const string& id = c->getId_Cancion();
+            if (id.empty() || existeId(id)) { incrementarIteraciones(); continue; }
+            fusion[nFusion++] = c; incrementarIteraciones();
+        }
+
+        if (nFusion == 0) {
+            delete[] fusion; liberarMemoria<cancion*>(cap);
+            cout << "No hay canciones para reproducir (ni propias ni seguidas).\n"; return;
+        }
+        fav = fusion; tam = nFusion; esFusion = true;
+    }
     // 2) Tomar solo punteros válidos
-    cancion** fav = miLista->getLista();
-    int tam = miLista->getTamLista();
     if (!fav || tam <= 0) { cout << "Tu lista de favoritos está vacía.\n"; return; }
 
     int validos = 0;
     for (int i = 0; i < tam; ++i) {
-        if (fav[i]) ++validos;}
-    if (validos == 0) {
-        cout << "Tu lista no contiene canciones válidas.\n"; return; }
+        if (fav[i]) ++validos;
+        incrementarIteraciones();
+    }
+    if (validos == 0) { cout << "Tu lista no contiene canciones válidas.\n"; return; }
 
     // 3) Compactar índices válidos
     int* idxs = new int[validos];
@@ -593,20 +686,59 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
         incrementarIteraciones();
     }
 
-    // 4) Reproducción secuencial con controles: N (siguiente), P (previa, hasta M=6), S (salir)
-    const int M_PREV = 6;     // límite de retroceso
-    int cursor = 0;           // apunta al índice en idxs[] que estamos reproduciendo
+    // === Historial atrás (solo retroceso), sin "adelante" ===
+    const int M_PREV = 6;     // máximo de pasos hacia atrás que guardamos
+
+    cancion** pilaAtras = nullptr;
+    int nAtras = 0;
+
+    auto pushAtras = [&](cancion* c){
+        if (c == nullptr) return;
+        if (nAtras < M_PREV) {
+            cancion** nuevo = new cancion*[nAtras + 1];
+            registrarMemoria<cancion*>(nAtras + 1);
+            for (int i = 0; i < nAtras; ++i) { nuevo[i] = pilaAtras[i]; incrementarIteraciones(); }
+            nuevo[nAtras] = c;
+            if (pilaAtras) { delete[] pilaAtras; liberarMemoria<cancion*>(nAtras); }
+            pilaAtras = nuevo; nAtras += 1;
+        } else {
+            // lleno: descartamos el más viejo y metemos c al final
+            cancion** nuevo = new cancion*[M_PREV];
+            registrarMemoria<cancion*>(M_PREV);
+            for (int i = 1; i < M_PREV; ++i) { nuevo[i-1] = pilaAtras[i]; incrementarIteraciones(); }
+            nuevo[M_PREV-1] = c;
+            if (pilaAtras) { delete[] pilaAtras; liberarMemoria<cancion*>(M_PREV); }
+            pilaAtras = nuevo; nAtras = M_PREV;
+        }
+    };
+
+    auto popAtras = [&]()->cancion*{
+        if (nAtras == 0) return nullptr;
+        cancion* top = pilaAtras[nAtras-1];
+        if (nAtras-1 > 0) {
+            cancion** nuevo = new cancion*[nAtras - 1];
+            registrarMemoria<cancion*>(nAtras - 1);
+            for (int i = 0; i < nAtras-1; ++i) { nuevo[i] = pilaAtras[i]; incrementarIteraciones(); }
+            delete[] pilaAtras; liberarMemoria<cancion*>(nAtras);
+            pilaAtras = nuevo; nAtras -= 1;
+        } else {
+            delete[] pilaAtras; liberarMemoria<cancion*>(nAtras);
+            pilaAtras = nullptr; nAtras = 0;
+        }
+        return top;
+    };
+    // === fin historial ===
+
+    int cursor = 0;           // índice en idxs[]
     bool salir = false;
 
-    cout << "\n=== Mi lista de favoritos (SECUENCIAL) ===\n";
+    cout << "\n=== Mi lista de favoritos (SECUENCIAL – PREMIUM) ===\n";
     while (!salir) {
-        // Seguridad
         if (cursor < 0) cursor = 0;
         if (cursor >= validos) cursor = validos - 1;
 
         cancion* c = fav[ idxs[cursor] ];
         if (c) {
-            // Resuelve meta (ya definida en utilidades.cpp)
             auto meta = resolverMetaDesdeIdCancion(c->getId_Cancion(),
                                                    albumnes, totalAlbumnes,
                                                    artistas, totalArtistas);
@@ -617,52 +749,64 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
                 cout << "Portada: " << meta.rutaPortada   << "\n";
             }
             cout << "Titulo:  " << c->getNombreCancion() << "\n";
-            // Premium → 320, Estándar → 128 (por si llamas esto desde estándar)
             const string& rutaAudio = (user->getMembresia() == "premium") ? c->getRuta320() : c->getRuta128();
             cout << "Ruta:    " << rutaAudio << "\n";
             cout << "Duracion:" << c->getDuracion() << "\n\n";
         }
 
-        // Mostrar controles
-        cout << "[N] siguiente   [P] previa   [S] salir\n";
-        // Si hay un \n pendiente en el buffer, límpialo
+        cout << "[N] siguiente   [P] previa   [R] repetir   [S] salir\n";
         if (cin.peek()=='\n') cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        char op = 0;
-        cin >> op;
+        char op = 0; cin >> op;
 
         if (op=='S' || op=='s') {
             salir = true;
+
+        } else if (op=='R' || op=='r') {
+            // repetir: no movemos el cursor ni tocamos historial
+
         } else if (op=='N' || op=='n') {
             if (cursor + 1 < validos) {
+                // el actual queda en historial hacia atrás
+                pushAtras( fav[idxs[cursor]] );
                 ++cursor;
             } else {
                 cout << "(Fin de la lista)\n";
             }
+
         } else if (op=='P' || op=='p') {
-            // Puedes retroceder hasta M_PREV canciones, o hasta el inicio si hay menos
-            int maxRetrocedibles = (cursor < M_PREV) ? cursor : M_PREV;
-            if (maxRetrocedibles > 0) {
-                --cursor;
+            // ir a la canción anterior del historial (si existe)
+            cancion* anterior = popAtras();
+            if (anterior) {
+                // ubicar la canción anterior en fav (por puntero)
+                int nuevoIdx = -1;
+                for (int i = 0; i < validos; ++i) {
+                    if (fav[idxs[i]] == anterior) { nuevoIdx = i; break; }
+                    incrementarIteraciones();
+                }
+                if (nuevoIdx >= 0) cursor = nuevoIdx;
+                else cout << "(No se pudo ubicar la canción anterior)\n";
             } else {
-                cout << "(No hay previa o alcanzaste el límite de " << M_PREV << ")\n";
+                cout << "(No hay previa)\n";
             }
+
         } else {
-            // Cualquier otra tecla => tratamos como 'N'
-            if (cursor + 1 < validos) ++cursor;
-            else cout << "(Fin de la lista)\n";
+            // cualquier otra tecla => no hace nada especial
         }
     }
 
+    // liberar arreglos locales
     delete [] idxs;
-    // ADDED: reflejar la liberación del arreglo local de enteros
     liberarMemoria<int>(validos);
+
+    if (pilaAtras){ delete[] pilaAtras; liberarMemoria<cancion*>(nAtras); }
+    if (esFusion) { delete[] fav; liberarMemoria<cancion*>(tam); }
+
+
     cout << "[INFO] Fin del recorrido de tu lista de favoritos.\n";
 }
 
 
-// --- Reproducción aleatoria de mi lista (PREMIUM) ---
-// Versión con buffer circular de 6 punteros (sin guardar toda la secuencia),
-// evitando escoger como "siguiente" cualquiera de las 6 últimas canciones.
+
 void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
                                               lista_favoritos** listas, int totalListas,
                                               album** albumnes, int totalAlbumnes,
@@ -679,10 +823,76 @@ void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
         if (listas[i] && listas[i]->getNicknameSeguidor() == nick) { miLista = listas[i]; break; }
     }
     if (!miLista || miLista->getTamLista() <= 0) { cout << "Tu lista de favoritos está vacía.\n"; return; }
+    // ==== SIEMPRE MODO FUSIONADO ====
+    // Mi lista
+    cancion** arrP = miLista->getLista();
+    int       tamP = miLista->getTamLista();
+
+    // Posible lista del seguido (si existe en 'listas' por nicknameAseguir)
+    cancion** arrS = nullptr;
+    int       tamS = 0;
+    {
+        const string nickSeguido = user->getNicknameAseguir();
+        if (!nickSeguido.empty()) {
+            for (int i = 0; i < totalListas; ++i) {
+                if (listas[i] && listas[i]->getNicknameSeguidor() == nickSeguido) {
+                    arrS = listas[i]->getLista();
+                    tamS = listas[i]->getTamLista();
+                    break;
+                }
+            }
+        }
+    }
+
+    // Si no hay seguida válida, usamos solo la propia; si sí hay, construimos fusión sin duplicados
+    cancion** fav = nullptr;
+    int       tam = 0;
+    bool      esFusion = false;
+
+    if (!arrS || tamS <= 0) {
+        cout << "\n=== Mis favoritos (ALEATORIO – SOLO MI LISTA) ===\n";
+        fav = arrP; tam = tamP;
+    } else {
+        // Fusión temporal por punteros (sin duplicar IDs)
+        int cap = tamP + tamS; if (cap <= 0) cap = 1;
+        cancion** fusion = new cancion*[cap];
+        registrarMemoria<cancion*>(cap);
+        for (int i = 0; i < cap; ++i) fusion[i] = nullptr;
+
+        auto existeId = [&](const string& id)->bool {
+            for (int k = 0; k < cap; ++k)
+                if (fusion[k] && fusion[k]->getId_Cancion() == id) return true;
+            return false;
+        };
+
+        int nFusion = 0;
+        // Primero: mis canciones
+        for (int i = 0; i < tamP; ++i) {
+            cancion* c = (arrP ? arrP[i] : nullptr);
+            if (!c) continue;
+            const string& id = c->getId_Cancion();
+            if (id.empty() || existeId(id)) continue;
+            fusion[nFusion++] = c;
+        }
+        // Luego: las del seguido
+        for (int i = 0; i < tamS; ++i) {
+            cancion* c = (arrS ? arrS[i] : nullptr);
+            if (!c) continue;
+            const string& id = c->getId_Cancion();
+            if (id.empty() || existeId(id)) continue;
+            fusion[nFusion++] = c;
+        }
+
+        if (nFusion == 0) {
+            delete[] fusion; liberarMemoria<cancion*>(cap);
+            cout << "Tu lista fusionada quedó vacía.\n"; return;
+        }
+
+        cout << "\n=== Mis favoritos (ALEATORIO – FUSIONADA) ===\n";
+        fav = fusion; tam = nFusion; esFusion = true;
+    }
 
     // 2) Fuente y conteo de válidos (sin STL)
-    cancion** fav = miLista->getLista();
-    const int tam = miLista->getTamLista();
     int validos = 0; for (int i=0;i<tam;++i) if (fav[i]) ++validos;
     if (validos <= 0) { cout << "Tu lista no contiene canciones válidas.\n"; return; }
 
@@ -798,11 +1008,45 @@ void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
         }
         incrementarIteraciones();
     }
-
+    if (esFusion) { delete[] fav; liberarMemoria<cancion*>(tam); }
     cout << "[INFO] Fin de favoritos (aleatorio premium).\n";
 }
 
+// =====================
+// MENU USUARIO ESTÁNDAR
+// =====================
 
+void mostrarMenuEstandar(usuario* usuarioActual, int totalUsuarios,
+                         cancion**& canciones, int& totalCanciones,
+                         album** albumnes, int totalAlbumnes,
+                         artista** artistas, int totalArtistas,
+                         anuncio**& anuncios,int & totalAnuncios)
+{
+    bool exit = false;
+    while (!exit) {
+        incrementarIteraciones();
+        cout << "------------------------------\n";
+        cout << "MENU USUARIO ESTANDAR\n";
+        cout << "------------------------------\n";
+        cout << "1. Reproduccion aleatoria \n";
+        cout << "2. Volver al menu principal\n";
+
+        int opc = validad_entero(1, 2);
+
+        if (opc == 1) {
+            reproduccionAleatoria(usuarioActual, totalCanciones, canciones, artistas, totalArtistas, albumnes,totalAlbumnes, anuncios, totalAnuncios);
+
+            mostrarUsoMemoria();
+        }
+        else {
+            exit = true;
+        }
+    }
+}
+
+// =====================
+// MENU USUARIO PREMIUM
+// =====================
 void mostrarMenuPremium(usuario* usuarioActual,usuario** usuarios, int totalUsuarios,
                         cancion**& canciones, int& totalCanciones,
                         lista_favoritos**& listadefavoritos, int& totalListas,
@@ -899,19 +1143,29 @@ void mostrarMenuPremium(usuario* usuarioActual,usuario** usuarios, int totalUsua
                     }
                 }
                 else if (opc_2 == 2) {
-                    cout << "Nickname a seguir: ";
-                    string nick;
-                    cin >> nick;
-                    seguirListaFavoritosPorNickname(usuarios, totalUsuarios,
-                                                    listadefavoritos, totalListas,
-                                                    usuarioActual, nick);
+                    int opc_3;
+                    cout <<"1. Seguir usuario nuevo: "<< endl;
+                    cout <<"2. Eliminar usuario existente: "<< endl;
+                    cin >>opc_3;
+                    if (opc_3==1){
+                            cout << "Nickname a seguir: ";
+                            string nick;
+                            cin >> nick;
+                            seguirListaFavoritosPorNickname(usuarios, totalUsuarios,
+                                                            listadefavoritos, totalListas,
+                                                            usuarioActual, nick);
+                    }
+                    else if (opc_3==2){
+                        dejarDeSeguirLista(usuarioActual, usuarios, totalUsuarios);
+
+                    }
 
                 }
                 else if (opc_2 == 3) {
                     cout << "\n--- Ejecutar mis favoritos ---\n";
                     cout << "1. Secuencial\n";
-                    cout << "2. Aleatoria (premium)\n";
-                    int modo = validad_entero(1, 2);  // ya existente en utilidades.cpp
+                    cout << "2. Aleatoria\n";
+                    int modo = validad_entero(1, 2);
 
                     if (modo == 1) {
                         ejecutarMiListaFavoritosSecuencial(usuarioActual, listadefavoritos, totalListas,
@@ -935,21 +1189,72 @@ void mostrarMenuPremium(usuario* usuarioActual,usuario** usuarios, int totalUsua
 }
 
 
+bool seguirListaFavoritosPorNickname(usuario** usuarios, int totalUsuarios,
+                                     lista_favoritos** listas, int totalListas,
+                                     usuario* seguidor, const string& nickObjetivo)
+{
+    if (!seguidor) {
+        cout << "[ERROR] No hay usuario seguidor.\n"; return false; }
 
-// ---------------------------------------------------
-// Dejar de seguir (desenlaza puntero).
-// ---------------------------------------------------
-void dejarDeSeguirLista(usuario* seguidor)
+    usuario* objetivo = buscarUsuarioPorNickname(usuarios, totalUsuarios, nickObjetivo);
+    if (!objetivo) {
+        cout << "[ERROR] No existe el usuario: " << nickObjetivo << "\n"; return false; }
+    if (objetivo == seguidor) {
+        cout << "[WARN] No puedes seguir tu propia lista.\n"; return false; }
+
+    //  CLAVE: buscar en el ARREGLO DE LISTAS por nickname
+    lista_favoritos* listaObjetivo = buscarListaDeFavoritos(objetivo, listas, totalListas);
+    if (!listaObjetivo) {
+        cout << "[ERROR] El usuario objetivo no tiene lista de favoritos.\n";
+        return false;
+    }
+    if (seguidor->getMembresia() != "premium") {
+        cout << "[ERROR] Solo usuarios premium pueden seguir listas.\n";
+        return false;
+    }
+    if (objetivo->getMembresia() != "premium") {
+        cout << "[ERROR] Solo puedes seguir listas de usuarios premium.\n";
+        return false;
+    }
+
+    if (seguidor->seguir_listafavorita(listaObjetivo)) {
+        cout << "[OK] Ahora sigues la lista de " << nickObjetivo << ".\n";
+        // Actualiza el campo para persistir:
+        seguidor->setNicknameAseguir(nickObjetivo);
+
+        // Guarda usuarios.txt con el nuevo "a quien sigo"
+        if (!guardarUsuarios(usuarios, totalUsuarios)) {
+            cout << "[WARN] No se pudo guardar usuarios.txt con el seguimiento.\n";
+        } else {
+            cout << "[OK] Seguimiento guardado en usuarios.txt\n";
+        }
+        return true;
+    } else {
+        cout << "[INFO] Ya seguías esa lista.\n";
+        return false;
+    }
+}
+
+
+void dejarDeSeguirLista(usuario* seguidor,
+                        usuario** usuarios, int totalUsuarios)
 {
     if (!seguidor) return;
     seguidor->dejar_seguir();
-    cout << "[OK] Dejaste de seguir la lista.\n";
+
+    // Limpia el campo y persiste
+    seguidor->setNicknameAseguir("");
+
+    if (!guardarUsuarios(usuarios, totalUsuarios)) {
+        std::cout << "[WARN] No se pudo guardar usuarios.txt al dejar de seguir.\n";
+    } else {
+        std::cout << "[OK] Dejar de seguir guardado en usuarios.txt\n";
+    }
+
+    std::cout << "[OK] Dejaste de seguir la lista.\n";
 }
 
-// ---------------------------------------------------
-// Imprimir la vista fusionada (propia + seguida) sin duplicados.
-// Usa tu método: usuario::recorrerFavoritosFusion(visitor).
-// ---------------------------------------------------
+
 void imprimirFavoritosFusion(usuario* u)
 {
     if (!u) {
@@ -969,3 +1274,32 @@ void imprimirFavoritosFusion(usuario* u)
     u->recorrerFavoritosFusion(visitor);
 }
 
+bool guardarUsuarios(usuario** usuarios, int totalUsuarios, const std::string& ruta)
+{
+    if (!usuarios || totalUsuarios <= 0) return false;
+
+    std::ofstream out(ruta.c_str(), std::ios::out | std::ios::trunc);
+    if (!out.is_open()) {
+        std::cout << "No se pudo abrir " << ruta << " para escritura.\n";
+        return false;
+    }
+
+    for (int i = 0; i < totalUsuarios; ++i) {
+        usuario* u = usuarios[i];
+        if (!u) continue;
+
+        // FORMATO: nick,membresia,ciudad,pais,fecha,nicknameAseguir
+        out << u->getNickname()        << ","
+            << u->getMembresia()       << ","
+            << u->getCiudad()          << ","
+            << u->getPais()            << ","
+            << u->getFecha()           << ","
+            << u->getNicknameAseguir() << "\n";
+    }
+
+    if (!out.good()) {
+        std::cout << "Error al escribir " << ruta << ".\n";
+        return false;
+    }
+    return true;
+}
