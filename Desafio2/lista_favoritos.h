@@ -29,6 +29,9 @@ public:
     const string& getNicknameSeguidor() const { return nickname_seguidor; }
     cancion** getLista() const { return lista_favorito; }
     int getTamLista() const { return tam_lista; }
+    // ADDED (en la sección pública de la clase):
+    ~lista_favoritos();
+
 
 
 };

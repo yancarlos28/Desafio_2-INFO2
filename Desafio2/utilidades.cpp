@@ -344,6 +344,7 @@ void mostrarAnuncio(anuncio**& anuncios, int& totalAnuncios)
         if (tipo == "C") ++cantidadC;
         else if (tipo == "B") ++cantidadB;
         else /* "AAA" u otro */ ++cantidadAAA;
+        incrementarIteraciones();
     }
 
     // Random simple (no-único) local y seguro
@@ -374,6 +375,7 @@ void mostrarAnuncio(anuncio**& anuncios, int& totalAnuncios)
                       (cat=='B' && t=="B") ||
                       (cat=='A' && (t=="AAA" || (t!="B" && t!="C")));
             if (ok) ++count;
+            incrementarIteraciones();
         }
         if (count == 0) return nullptr;
 
@@ -390,6 +392,7 @@ void mostrarAnuncio(anuncio**& anuncios, int& totalAnuncios)
                 if (k == 0) return a;
                 --k;
             }
+            incrementarIteraciones();
         }
         return nullptr;
     };
@@ -422,9 +425,16 @@ void mostrarAnuncio(anuncio**& anuncios, int& totalAnuncios)
 
     if (!ptrAnuncioActual) return; // no hay nada que mostrar
 
-    // Mostrar y recordar
-    cout << ptrAnuncioActual->getMensaje();
+    // Mostrar categoría + mensaje y recordar
+    {
+        const string& tipo = ptrAnuncioActual->getTipo_Anuncio();
+        const char* etiqueta = (tipo == "C") ? "C"
+                               : (tipo == "B") ? "B"
+                                               : "AAA";
+        cout << "[Categoria anuncio: " << etiqueta << "] " << ptrAnuncioActual->getMensaje() << "\n";
+    }
     ptrAnuncioAnterior = ptrAnuncioActual;
+
 }
 
 
@@ -439,33 +449,75 @@ void reproduccionAleatoria(usuario* user,
                            int& totalAnuncios)
 {
     if (!user || !canciones || totalCanciones <= 0) {
-        cout << "(No hay canciones para reproducir)\n";
+        std::cout << "(No hay canciones para reproducir)\n";
         return;
     }
-    const int limiteK = 5;
-    const int limite = (totalCanciones < limiteK) ? totalCanciones : limiteK;
 
+    // ===== Modo ESTANDAR pedido =====
     if (user->getMembresia() == "estandar") {
-        for (int reproduccion = 0; reproduccion < limite; ++reproduccion) {
-            reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
-            std::this_thread::sleep_for(std::chrono::seconds(3)); // temporizador de 3s
+        int desdeUltAnuncio = 0;
 
-            // Anuncio cada 2 canciones (2, 4,...). Con limite=5 saldrán a lo sumo 2 anuncios (tras la 2 y la 4).
-            if ((reproduccion + 1) % 2 == 0 && totalAnuncios > 0) {
+        // 1) Mostrar las primeras 5
+        const int K = 5;
+        for (int i = 0; i < K; ++i) {
+            reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
+            ++desdeUltAnuncio;
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+
+            if (desdeUltAnuncio == 2 && totalAnuncios > 0) {
                 mostrarAnuncio(anuncios, totalAnuncios);
-                std::this_thread::sleep_for(std::chrono::seconds(3)); // pausa corta tras anuncio
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+                desdeUltAnuncio = 0;
+            }
+            incrementarIteraciones();
+        }
+
+        // 2) Luego: ir pidiendo siguiente o detener
+        while (true) {
+            std::cout << "[N] siguiente   [S] detener\n";
+            if (std::cin.peek()=='\n')
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            char op = 0;
+            std::cin >> op;
+
+            if (op=='S' || op=='s') {
+                std::cout << "Se detuvo la reproduccion.\n";
+                break;
+            }
+
+            // N o cualquier otra tecla => siguiente
+            reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
+            ++desdeUltAnuncio;
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+
+            if (desdeUltAnuncio == 2 && totalAnuncios > 0) {
+                mostrarAnuncio(anuncios, totalAnuncios);
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+                desdeUltAnuncio = 0;
             }
         }
-    } else { // premium
-        for (int reproduccion = 0; reproduccion < limite; ++reproduccion) {
-            reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
-            std::this_thread::sleep_for(std::chrono::seconds(3)); // temporizador de 3s
-        }
+        return;
     }
 
-    cout << "Reproduccion finalizada automaticamente tras "
-              << limite << " canciones.\n";
+    // ===== Premium (sin anuncios). Puedes dejarlo igual o adaptarlo similar si quieres. =====
+    const int K = 5;
+    for (int i = 0; i < K; ++i) {
+        reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+    }
+    // Continuo opcional en premium:
+    while (true) {
+        std::cout << "[N] siguiente   [S] detener\n";
+        if (std::cin.peek()=='\n')
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        char op = 0; std::cin >> op;
+        if (op=='S'||op=='s') { std::cout << "Se detuvo la reproduccion.\n"; break; }
+        reproducirCancion(user, canciones, totalCanciones, artistas, totalArtistas, albumes, totalAlbumes);
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+    }
 }
+
 
 
 void mostrarMenuEstandar(usuario* usuarioActual, int totalUsuarios,
@@ -537,7 +589,9 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
     registrarMemoria<int>(validos);
     int p = 0;
     for (int i = 0; i < tam; ++i) {
-        if (fav[i]) idxs[p++] = i;}
+        if (fav[i]) idxs[p++] = i;
+        incrementarIteraciones();
+    }
 
     // 4) Reproducción secuencial con controles: N (siguiente), P (previa, hasta M=6), S (salir)
     const int M_PREV = 6;     // límite de retroceso
@@ -600,6 +654,8 @@ void ejecutarMiListaFavoritosSecuencial(usuario* user,
     }
 
     delete [] idxs;
+    // ADDED: reflejar la liberación del arreglo local de enteros
+    liberarMemoria<int>(validos);
     cout << "[INFO] Fin del recorrido de tu lista de favoritos.\n";
 }
 
@@ -740,6 +796,7 @@ void ejecutarMiListaFavoritosAleatorioPremium(usuario* user,
             if (nextIdx >= 0) idxActual = nextIdx;
             // Si por alguna razón no se encontró, se quita el continue y se reintenta en la próxima iteración
         }
+        incrementarIteraciones();
     }
 
     cout << "[INFO] Fin de favoritos (aleatorio premium).\n";

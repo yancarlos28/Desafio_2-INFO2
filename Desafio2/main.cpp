@@ -5,6 +5,8 @@
 #include <album.h>
 #include <utilidades.h>
 #include <artista.h>
+#include "memoria.h"
+#include "liberar_memoria.h"
 
 using namespace std;
 
@@ -34,6 +36,29 @@ int main()
     // 2) LOGIN + MENU
 
     flujoLoginYMenu(canciones, totalCanciones, usuarios, totalUsuarios, listas, totalListas, anuncios, totalAnuncios, albumes, totalAlbumnes, artistas, totalArtistas);
+    cout << "\n=== Métricas antes de liberar ===\n";
+    mostrarUsoMemoria();
+
+    liberarArregloDePunteros(listas, totalListas);
+    cout << "[Tras liberar listas] "; mostrarUsoMemoria();
+
+    liberarArregloDePunteros(usuarios, totalUsuarios);
+    cout << "[Tras liberar usuarios] "; mostrarUsoMemoria();
+
+    liberarArregloDePunteros(canciones, totalCanciones);
+    cout << "[Tras liberar canciones] "; mostrarUsoMemoria();
+
+    liberarArregloDePunteros(albumes, totalAlbumnes);
+    cout << "[Tras liberar albumes] "; mostrarUsoMemoria();
+
+    liberarArregloDePunteros(artistas, totalArtistas);
+    cout << "[Tras liberar artistas] "; mostrarUsoMemoria();
+
+    liberarArregloDePunteros(anuncios, totalAnuncios);
+    cout << "[Tras liberar anuncios] "; mostrarUsoMemoria();
+
+    cout << "\n=== Métricas tras liberar todo ===\n";
+    mostrarUsoMemoria();
 
     return 0;
 }

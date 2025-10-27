@@ -16,6 +16,7 @@ private:
     string ciudadUsuario;
     string paisUsuario;
     string fechaInscripcion;
+    string nicknameAseguir;
     //cancion **historialAleatorio;
     //cancion **historialFavoritos;
     lista_favoritos *sigueA;
@@ -28,7 +29,8 @@ public:
             const string& membresia_,
             const string& ciudadUsuario_,
             const string& paisUsuario_,
-            const string& fechaInscripcion_);
+            const string& fechaInscripcion_,
+            const string& nicknameAseguir_);
 
     //cargar datos suarios
     static void cargarUsuarios(usuario**& usuarios, int& totalUsuarios);
@@ -40,6 +42,7 @@ public:
     lista_favoritos* getListaFavoritos() const { return favoritos; }
     lista_favoritos* getListaSeguido() const { return sigueA; }
     void setListaFavoritos(lista_favoritos* lf) { favoritos = lf; }
+    const string& getNicknameAseguir() const;
 
     //Busqueda y seguimiento
     bool seguir_listafavorita(lista_favoritos* lista_aSeguir);

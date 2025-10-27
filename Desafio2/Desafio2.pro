@@ -18,6 +18,7 @@ HEADERS += \
     anuncio.h \
     artista.h \
     cancion.h \
+    liberar_memoria.h \
     lista_favoritos.h \
     memoria.h \
     usuario.h \

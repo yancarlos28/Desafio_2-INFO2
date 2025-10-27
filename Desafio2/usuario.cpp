@@ -17,12 +17,14 @@ usuario::usuario(const string& nickname_,
                  const string& membresia_,
                  const string& ciudadUsuario_,
                  const string& paisUsuario_,
-                 const string& fechaInscripcion_)
+                 const string& fechaInscripcion_,
+                 const string &nicknameAseguir_)
     : nickname(nickname_),
     membresia(membresia_),
     ciudadUsuario(ciudadUsuario_),
     paisUsuario(paisUsuario_),
     fechaInscripcion(fechaInscripcion_),
+    nicknameAseguir(nicknameAseguir_),
     //historialAleatorio(nullptr),
     //historialFavoritos(nullptr),
     sigueA(nullptr),
@@ -48,7 +50,10 @@ void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {
     int total = 0;
 
     // Contar líneas para conocer cuántas canciones hay
-    while (getline(archivo, linea)) total++;
+    while (getline(archivo, linea)) {
+        total++;
+        incrementarIteraciones();
+    }
     archivo.clear();
     archivo.seekg(0);
 
@@ -61,14 +66,15 @@ void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {
     // Leer y construir cada objeto cancion
     while (getline(archivo, linea)) {
         stringstream frase(linea);
-        string nombre_usuario, membresia, ciudad, pais, fecha_Incripcion;
+        string nombre_usuario, membresia, ciudad, pais, fecha_Incripcion, nicknameAseguir;
         getline(frase, nombre_usuario, ',');
         getline(frase, membresia, ',');
         getline(frase, ciudad, ',');
         getline(frase, pais, ',');
-        getline(frase, fecha_Incripcion);
+        getline(frase, fecha_Incripcion,',');
+        getline(frase, nicknameAseguir);
 
-        usuario* nuevoUsuario = new usuario(nombre_usuario, membresia, ciudad, pais, fecha_Incripcion);
+        usuario* nuevoUsuario = new usuario(nombre_usuario, membresia, ciudad, pais, fecha_Incripcion,nicknameAseguir);
         registrarMemoria<usuario>(1);
         usuarios[i++] = nuevoUsuario;
         incrementarIteraciones();
@@ -83,6 +89,9 @@ const string& usuario::getNickname() const {
 
 const string& usuario::getMembresia() const {
     return membresia;
+}
+const string& usuario::getNicknameAseguir() const {
+    return nicknameAseguir;
 }
 /*
 const string& usuario::getCiudad() const {
@@ -134,7 +143,7 @@ void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
     if (cap <= 0) cap = 1;
 
     cancion** vistos = new cancion*[cap];
-    registrarMemoria<cancion>(cap);
+    registrarMemoria<cancion*>(cap);
     int nVistos = 0;
 
     // Helper local: ¿ya vimos este ID?
@@ -155,6 +164,7 @@ void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
 
         vistos[nVistos++] = s;
         visitor(s);
+        incrementarIteraciones();
     }
 
     // 2) Luego, canciones del seguido (si hay)
@@ -166,8 +176,9 @@ void usuario::recorrerFavoritosFusion(void (*visitor)(cancion*)) const
 
         vistos[nVistos++] = s;
         visitor(s);
+        incrementarIteraciones();
     }
 
     delete[] vistos;
-    liberarMemoria<cancion>(cap);
+    liberarMemoria<cancion*>(cap);
 }

@@ -36,7 +36,10 @@ void artista::cargarArtistas(artista**& artistas, int& totalArtistas) {
     int total = 0;
 
     // Contar líneas para conocer cuántas canciones hay
-    while (getline(archivo, linea)) total++;
+    while (getline(archivo, linea)) {
+        total++;
+        incrementarIteraciones();
+    }
     archivo.clear();
     archivo.seekg(0);
 
