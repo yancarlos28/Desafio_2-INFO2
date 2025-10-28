@@ -11,7 +11,8 @@ SOURCES += \
         lista_favoritos.cpp \
         main.cpp \
         usuario.cpp \
-        utilidades.cpp
+        utilidades.cpp \
+        utilidades_2.cpp
 
 HEADERS += \
     album.h \

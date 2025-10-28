@@ -13,6 +13,8 @@ private:
     string nickname_seguidor;
     cancion **lista_favorito;
     int tam_lista;
+    bool contienePtr(cancion** arr, int usados, cancion* c) const;
+
 
 public:
 
@@ -29,7 +31,9 @@ public:
     const string& getNicknameSeguidor() const { return nickname_seguidor; }
     cancion** getLista() const { return lista_favorito; }
     int getTamLista() const { return tam_lista; }
-    // ADDED (en la sección pública de la clase):
+
+
+    //destructor
     ~lista_favoritos();
 
 

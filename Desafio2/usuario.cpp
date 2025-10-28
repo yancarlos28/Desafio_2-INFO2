@@ -25,8 +25,6 @@ usuario::usuario(const string& nickname_,
     paisUsuario(paisUsuario_),
     fechaInscripcion(fechaInscripcion_),
     nicknameAseguir(nicknameAseguir_),
-    //historialAleatorio(nullptr),
-    //historialFavoritos(nullptr),
     sigueA(nullptr),
     favoritos(nullptr)
 {
@@ -34,8 +32,6 @@ usuario::usuario(const string& nickname_,
     if (membresia != "premium" && membresia != "estandar")
         membresia = "estandar"; // valor por defecto
 
-    // Configurar historiales vacíos
-    //configurarHistoriales(4, 6);
 }
 
 void usuario::cargarUsuarios(usuario**& usuarios, int& totalUsuarios) {

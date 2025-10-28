@@ -15,8 +15,6 @@ public:
 
     anuncio(const string& tipo_anuncio_, const string& mensaje_);
     static void cargarAnuncios(anuncio**& mensaje_, int& totalAnuncios);
-
-    // Getters
     const string& getTipo_Anuncio() const;
     const string& getMensaje() const;
 };

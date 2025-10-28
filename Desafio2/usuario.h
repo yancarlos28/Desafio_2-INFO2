@@ -17,8 +17,6 @@ private:
     string paisUsuario;
     string fechaInscripcion;
     string nicknameAseguir;
-    //cancion **historialAleatorio;
-    //cancion **historialFavoritos;
     lista_favoritos *sigueA;
     lista_favoritos *favoritos;
 
@@ -49,12 +47,10 @@ public:
     void dejar_seguir();
     void recorrerFavoritosFusion(void (*visitor)(cancion*)) const;
 
-    // usuario.h  (añadir en public:)
     const string& getCiudad() const;
     const string& getPais() const;
     const string& getFecha() const;
 
-    // Necesario para persistir "a quién sigo"
     void setNicknameAseguir(const string& nick);
 
 

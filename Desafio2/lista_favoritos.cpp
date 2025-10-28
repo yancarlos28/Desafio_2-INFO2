@@ -10,7 +10,7 @@ using namespace std;
 lista_favoritos::lista_favoritos(const string& id_usuario, const string& id_canciones)
     : nickname_seguidor(id_usuario),
     lista_favorito(nullptr),
-    tam_lista(0) // ← inicializamos
+    tam_lista(0)
 {
     if (id_canciones.empty()) {
         lista_favorito = nullptr;
@@ -28,9 +28,8 @@ lista_favoritos::lista_favoritos(const string& id_usuario, const string& id_canc
         incrementarIteraciones();
     }
 
-    tam_lista = cantidad;                // ← GUARDAMOS el tamaño
+    tam_lista = cantidad;
     lista_favorito = new cancion*[tam_lista];
-    // ADDED: registrar arreglo de punteros (NO objetos)
     registrarMemoria<cancion*>(tam_lista);
     for (int i = 0; i < tam_lista; ++i)
         lista_favorito[i] = nullptr;     // aún sin enlazar a canciones reales
@@ -71,7 +70,7 @@ void lista_favoritos::cargarListasFavoritos(lista_favoritos**& listaFavoritos, i
 
         lista_favoritos* nuevaLista = new lista_favoritos(id_usuario, id_canciones);
         registrarMemoria<lista_favoritos>(1);
-        nuevaLista->enlazarDesdeCadena(id_canciones, canciones, totalCanciones); // <--- ENLACE AQUÍ
+        nuevaLista->enlazarDesdeCadena(id_canciones, canciones, totalCanciones); // --- ENLACE AQUÍ
         listaFavoritos[i++] = nuevaLista;
         incrementarIteraciones();
     }
@@ -113,10 +112,10 @@ static void compactarLista(cancion**& arr, int& tam_lista) {
         incrementarIteraciones(); }
 
     if (arr != nullptr) {
-        // ADDED: liberar contabilidad correcta del arreglo anterior (punteros)
+        // liberar contabilidad correcta del arreglo anterior (punteros)
         // Nota: usamos tam_lista ANTES de reasignarlo a cnt
         delete[] arr;
-        // ADDED: neutraliza la liberación incorrecta que viene abajo (si existiera)
+        // neutraliza la liberación incorrecta que viene abajo (si existiera)
         registrarMemoria<cancion>(cnt);
         liberarMemoria<cancion>(cnt);         // neutraliza el registro previo errado
         liberarMemoria<cancion*>(tam_lista);  // libera correctamente el arreglo previo de punteros
@@ -239,7 +238,7 @@ bool lista_favoritos::eliminarPorIdTexto(const string& idTxt)
 
     // 3) reemplazar arreglo y actualizar tamaño lógico
     delete [] lista_favorito;
-    // ADDED: neutralizar y liberar correctamente el arreglo previo
+    //neutralizar y liberar correctamente el arreglo previo
     registrarMemoria<cancion>(tam_lista);               // añadimos para neutralizar la línea siguiente
     liberarMemoria<cancion>(tam_lista);                 // neutraliza
     liberarMemoria<cancion*>(tam_lista);                // libera correctamente el arreglo previo de punteros
@@ -278,7 +277,7 @@ bool guardarListasFavoritos(lista_favoritos** listas, int totalListas)
 
         out << nick << ",";  // siempre escribimos el nickname
 
-        // Escribir ids separados por ';' (solo punteros válidos)
+        // Escribir ids separados por ';'
         bool primero = true;
         for (int j = 0; j < n; ++j) {
             incrementarIteraciones();
@@ -298,8 +297,15 @@ bool guardarListasFavoritos(lista_favoritos** listas, int totalListas)
     return out.good();
 }
 
+bool lista_favoritos::contienePtr(cancion** arr, int usados, cancion* c) const {
+    if (!c) return false;
+    for (int i = 0; i < usados; ++i) {
+        if (arr[i] && (*arr[i] == *c)) return true; // ← usa operator==
+    }
+    return false;
+}
 
-// ADDED: destructor — libera SOLO el arreglo de punteros interno
+// destructor — libera solo el arreglo de punteros interno
 lista_favoritos::~lista_favoritos() {
     if (lista_favorito != nullptr) {
         delete[] lista_favorito;                    // libera el arreglo
