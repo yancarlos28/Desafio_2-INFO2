@@ -1,0 +1,58 @@
+Sueños del Alma,1023401,1266,2021-06-18,/users/storage/subruta_01/claudia\ lorelle/image/sueños\ del\ alma.png,Pop;Jazz;Latina,9,Golden Sound Records
+Reflejos Magnético,1023402,1228,2024-10-14,/users/storage/subruta_02/claudia\ lorelle/image/reflejos\ magnético.png,Hip Hop;Electrónica;Reggae,6,Andes Wave Studio
+Invierno Acústico,1034501,1133,2024-06-16,/users/storage/atlas_y/mariana\ pérez/image/invierno\ acústico.png,Pop;Rock;Blues;Jazz,9,Estudio Selva
+Ecos del Río,1034502,1312,2023-05-27,/users/storage/subruta_01/mariana\ pérez/image/ecos\ del\ río.png,Rock;Latina;Electrónica;Pop,9,Costa Brava Music
+Caminos del Río,1034503,1129,2023-01-31,/users/storage/atlas_x/mariana\ pérez/image/caminos\ del\ río.png,Reggae;Música Clásica;Electrónica,9,Urban Beat Records
+Silencios de la Ciudad,1383301,1097,2024-01-26,/users/storage/mix_07/proyecto\ selva/image/silencios\ de\ la\ ciudad.png,Reggae;Latina;Música Clásica,9,Altiplano Beats
+Latidos del Sur,1383302,1137,2021-04-16,/users/storage/orion/proyecto\ selva/image/latidos\ del\ sur.png,Música Clásica;Electrónica,8,Estudio Selva
+Verano Magnético,1383303,1155,2024-10-07,/users/storage/subruta_01/proyecto\ selva/image/verano\ magnético.png,Jazz;Blues;Latina,9,Costa Brava Music
+Silencios Electro,1426901,1285,2022-04-29,/users/storage/subruta_02/grupo\ satélite/image/silencios\ electro.png,Blues;Rock,7,Sol de Luna Music
+Horizonte Urbano,1426902,1231,2020-05-13,/users/storage/subruta_01/grupo\ satélite/image/horizonte\ urbano.png,Pop;Música Clásica,8,Altiplano Beats
+Silencios del Río,1482301,1031,2019-07-14,/users/storage/atlas_x/mar\ magnético/image/silencios\ del\ río.png,Música Clásica;Latina;Blues;Electrónica,7,Pájaro Azul
+Mareas del Sur,1482302,1099,2020-02-21,/users/storage/delta/mar\ magnético/image/mareas\ del\ sur.png,Música Clásica;Pop,10,Pájaro Azul
+Vibras Latino,1482303,1101,2019-12-06,/users/storage/atlas_y/mar\ magnético/image/vibras\ latino.png,Hip Hop;Reggae,10,Altiplano Beats
+Travesía Urbano,1482304,896,2019-09-09,/users/storage/atlas_x/mar\ magnético/image/travesía\ urbano.png,Blues;Música Clásica,10,Urban Beat Records
+Atardecer del Alma,2190201,976,2021-03-07,/users/storage/atlas_x/andrés\ pérez/image/atardecer\ del\ alma.png,Blues;Hip Hop;Latina;Jazz,7,Sol de Luna Music
+Origen de la Ciudad,2190202,978,2022-04-19,/users/storage/nimbus/andrés\ pérez/image/origen\ de\ la\ ciudad.png,Pop,6,Luna Nueva Label
+Origen Latino,2459401,1056,2022-09-07,/users/storage/subruta_02/ensamble\ satélite/image/origen\ latino.png,Reggae;Pop,8,Altiplano Beats
+Horizonte Acústico,2459402,1075,2022-12-07,/users/storage/mix_07/ensamble\ satélite/image/horizonte\ acústico.png,Pop,9,Costa Brava Music
+Ciclos Abierto,2607401,1034,2023-04-14,/users/storage/mix_07/proyecto\ satélite/image/ciclos\ abierto.png,Pop,6,Urban Beat Records
+Horizonte Urbano,2607402,931,2025-05-11,/users/storage/atlas_y/proyecto\ satélite/image/horizonte\ urbano.png,Jazz;Reggae;Electrónica;Hip Hop,9,Costa Brava Music
+Rutas Acústico,2639801,1090,2019-07-20,/users/storage/subruta_02/ciudad\ nómada/image/rutas\ acústico.png,Blues;Latina;Rock,6,Sol de Luna Music
+Origen Electro,2639802,969,2022-11-18,/users/storage/delta/ciudad\ nómada/image/origen\ electro.png,Hip Hop;Blues;Latina,10,Río Sonoro
+Vibras de la Ciudad,2639803,1060,2022-02-25,/users/storage/orion/ciudad\ nómada/image/vibras\ de\ la\ ciudad.png,Latina,9,Altiplano Beats
+Latidos Magnético,2663701,892,2024-12-19,/users/storage/subruta_01/ensamble\ satélite/image/latidos\ magnético.png,Reggae,7,Costa Brava Music
+Rituales Electro,2663702,1087,2020-06-30,/users/storage/atlas_x/ensamble\ satélite/image/rituales\ electro.png,Jazz;Rock,8,Sol de Luna Music
+Reflejos Urbano,2663703,914,2025-08-12,/users/storage/atlas_y/ensamble\ satélite/image/reflejos\ urbano.png,Electrónica;Latina,6,Sol de Luna Music
+Atardecer Electro,3710501,1073,2023-04-02,/users/storage/orion/noche\ libre/image/atardecer\ electro.png,Electrónica;Latina,8,Luna Nueva Label
+Invierno Acústico,3710502,938,2020-03-25,/users/storage/atlas_y/noche\ libre/image/invierno\ acústico.png,Hip Hop,7,Altiplano Beats
+Caminos Acústico,4313201,973,2022-10-22,/users/storage/delta/mar\ magnético/image/caminos\ acústico.png,Electrónica;Jazz,10,Urban Beat Records
+Paisajes del Alma,4313202,946,2020-09-03,/users/storage/delta/mar\ magnético/image/paisajes\ del\ alma.png,Electrónica;Blues;Latina;Pop,7,Costa Brava Music
+Origen de la Ciudad,5478901,1047,2024-08-30,/users/storage/atlas_y/andres\ parra/image/origen\ de\ la\ ciudad.png,Hip Hop;Jazz;Reggae;Rock,8,Costa Brava Music
+Vibraciones,5478903,936,2020-09-12,/users/storage/beta_path/andres\ parra/image/vibraciones.png,Rock;Hip Hop;Pop,8,Andes Wave Studio
+Amanecer de la Ciudad,5725701,999,2023-06-04,/users/storage/mix_07/héctor\ arias/image/amanecer\ de\ la\ ciudad.png,Blues,6,Golden Sound Records
+Rutas del Sur,5725702,942,2022-08-13,/users/storage/atlas_x/héctor\ arias/image/rutas\ del\ sur.png,Latina;Reggae;Música Clásica,6,Río Sonoro
+Latidos de la Ciudad,5725703,1046,2025-08-07,/users/storage/subruta_02/héctor\ arias/image/latidos\ de\ la\ ciudad.png,Hip Hop;Rock,8,Estudio Selva
+Luz Abierto,6211101,939,2020-02-13,/users/storage/subruta_01/tren\ bravo/image/luz\ abierto.png,Jazz;Hip Hop;Rock;Reggae,7,Río Sonoro
+Luz Urbano,6211102,1155,2024-05-07,/users/storage/mix_07/tren\ bravo/image/luz\ urbano.png,Jazz;Rock,9,Pájaro Azul
+Latidos Acústico,6325601,1085,2020-02-29,/users/storage/mix_07/ciudad\ nómada/image/latidos\ acústico.png,Reggae;Blues;Hip Hop,6,Urban Beat Records
+Horizonte Urbano,6325602,971,2025-08-10,/users/storage/delta/ciudad\ nómada/image/horizonte\ urbano.png,Música Clásica;Blues,9,Costa Brava Music
+Verano Urbano,6601201,1079,2023-11-16,/users/storage/kappa/rio\ urbano/image/verano\ urbano.png,Latina;Rock,9,Luna Nueva Label
+Verano Urbano,6601202,984,2019-12-29,/users/storage/atlas_y/rio\ urbano/image/verano\ urbano.png,Blues;Jazz;Latina;Hip Hop,10,Río Sonoro
+Horizonte Urbano,6601204,1024,2019-11-02,/users/storage/atlas_x/rio\ urbano/image/horizonte\ urbano.png,Rock;Blues;Reggae,7,Urban Beat Records
+Nuevo Amanecer,6601209,1128,2023-08-25,/users/storage/atlas_y/rio\ urbano/image/nuevo\ amanecer.png,Pop;Jazz,8,Urban Beat Records
+Paisajes Electro,7362301,946,2022-03-06,/users/storage/nimbus/ensamble\ selva/image/paisajes\ electro.png,Jazz,7,Río Sonoro
+Memorias del Río,7362302,1009,2022-08-20,/users/storage/kappa/ensamble\ selva/image/memorias\ del\ río.png,Reggae;Jazz,10,Costa Brava Music
+Vibras del Alma,7362303,1010,2019-10-25,/users/storage/beta_path/ensamble\ selva/image/vibras\ del\ alma.png,Blues,10,Urban Beat Records
+Invierno del Sur,7407101,1046,2020-05-03,/users/storage/delta/rafa\ arias/image/invierno\ del\ sur.png,Rock;Jazz,6,Golden Sound Records
+Travesía Latino,7407102,906,2019-06-18,/users/storage/nimbus/rafa\ arias/image/travesía\ latino.png,Electrónica,6,Río Sonoro
+Rituales de la Ciudad,7407103,968,2022-02-26,/users/storage/subruta_01/rafa\ arias/image/rituales\ de\ la\ ciudad.png,Rock,7,Estudio Selva
+Amanecer del Río,7407104,902,2019-06-01,/users/storage/delta/rafa\ arias/image/amanecer\ del\ río.png,Hip Hop,7,Costa Brava Music
+Latidos Magnético,7730101,1037,2022-09-29,/users/storage/kappa/luna\ mendez/image/latidos\ magnético.png,Música Clásica,8,Río Sonoro
+Vibras del Río,7730102,897,2020-12-04,/users/storage/subruta_01/luna\ mendez/image/vibras\ del\ río.png,Blues;Música Clásica,8,Estudio Selva
+Origen del Sur,7730103,1007,2022-12-29,/users/storage/beta_path/luna\ mendez/image/origen\ del\ sur.png,Rock;Electrónica;Reggae,6,Costa Brava Music
+Luz del Río,7730107,962,2022-03-27,/users/storage/mix_07/luna\ mendez/image/luz\ del\ rio.png,Latina;Pop;Electrónica,10,Sol de Luna Music
+Verano Latino,8009501,940,2019-04-26,/users/storage/subruta_02/calle\ sonoro/image/verano\ latino.png,Blues;Electrónica;Hip Hop,10,Pájaro Azul
+Latidos Electro,8009502,1075,2025-08-06,/users/storage/mix_07/calle\ sonoro/image/latidos\ electro.png,Hip Hop;Electrónica;Blues;Música Clásica,7,Luna Nueva Label
+Ciclos Abierto,8040101,1041,2023-03-31,/users/storage/kappa/calle\ interior/image/ciclos\ abierto.png,Electrónica;Hip Hop;Jazz;Música Clásica,6,Luna Nueva Label
+Travesía del Sur,8040102,1011,2025-05-18,/users/storage/nimbus/calle\ interior/image/travesía\ del\ sur.png,Latina,8,Andes Wave Studio

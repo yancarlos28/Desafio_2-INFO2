@@ -1,0 +1,100 @@
+luna_wave,premium,medellin,colombia,2023/02/15,melorhythm
+sonicbeats,estandar,santiago,chile,2022/11/03,
+melorhythm,premium,ciudad de mexico,mexico,2023/07/29,
+vibesoul,estandar,buenos aires,argentina,2021/09/10,
+jazztune,premium,lima,peru,2023/12/01,echolab5690
+electropulse,estandar,bogota,colombia,2022/04/20,
+acousticdreams,premium,quito,ecuador,2023/05/18,cloudroom0122
+beatfusion,estandar,montevideo,uruguay,2021/12/27,
+classicharmony,premium,caracas,venezuela,2024/01/09,echoroom4161
+rhythmflow,estandar,san jose,costa rica,2022/08/14,
+fusiondream9876,premium,cordoba,argentina,2022/08/26,
+sonicmix5990,premium,la plata,argentina,2025/06/29,melodydeck5404
+rhythmmix9172,premium,puebla,mexico,2021/09/05,rhythmpulse0842
+classicsoul5913,estandar,san jose,costa rica,2021/02/05,
+waveline0026,premium,valencia,venezuela,2024/06/25,melodydeck9760
+harmonywave9373,estandar,ciudad de mexico,mexico,2025/05/13,
+waveline6039,estandar,caracas,venezuela,2021/03/20,
+lunazone7261,premium,concepcion,chile,2022/09/28,acousticdream5290
+electrodream8768,premium,lima,peru,2025/02/20,
+synthlab0003,estandar,cusco,peru,2021/05/12,
+melodydeck5404,premium,valparaiso,chile,2021/07/02,
+fusiontune8706,estandar,la plata,argentina,2023/11/14,
+acoustictune1458,premium,valparaiso,chile,2022/08/11,jazztune
+rhythmrush9942,estandar,cordoba,argentina,2021/03/01,
+vibemix4345,premium,cordoba,argentina,2025/01/26,
+harmonyrush3721,premium,caracas,venezuela,2023/11/15,
+synthdream3531,premium,cuenca,ecuador,2023/06/25,rhythmsoul7603
+retroroom2814,premium,mendoza,argentina,2022/07/07,rhythmpulse0842
+vibezone3856,estandar,montevideo,uruguay,2022/05/15,
+echoroom4161,premium,ciudad del este,paraguay,2023/09/25,retrozone8846
+wavewave1989,estandar,caracas,venezuela,2025/08/25,
+vibetune0945,estandar,rosario,argentina,2023/01/08,
+beatline4339,premium,antofagasta,chile,2025/06/21,
+synthrush1058,estandar,maracaibo,venezuela,2024/06/24,
+harmonymix8883,estandar,asuncion,paraguay,2021/10/19,
+neonzone9330,estandar,santiago,chile,2023/04/11,
+lunadream2868,estandar,la plata,argentina,2022/08/24,
+viberush8714,estandar,cuenca,ecuador,2024/12/06,
+echolab5690,premium,valencia,venezuela,2023/10/14,
+wavesoul1592,premium,cochabamba,bolivia,2024/12/02,retroroom2814
+synthdeck5318,estandar,san jose,costa rica,2024/12/13,
+cloudroom0122,premium,barcelona,espana,2024/08/19,
+wavetune7043,premium,santiago,chile,2021/07/25,echoroom4161
+melodyroom2775,premium,salto,uruguay,2024/08/05,retroline8707
+harmonyroom6481,estandar,cartago,costa rica,2022/01/24,
+vibetune0683,estandar,bucaramanga,colombia,2025/04/27,
+rhythmtune8649,estandar,tijuana,mexico,2025/04/11,
+flowline8527,premium,madrid,espana,2023/09/11,
+rhythmsoul5753,estandar,ciudad de mexico,mexico,2025/07/07,
+soniczone3851,estandar,monterrey,mexico,2023/05/06,
+sonicwave9152,premium,la paz,bolivia,2021/12/21,echoroom4161
+harmonymix2415,estandar,maracaibo,venezuela,2025/10/17,
+fusiondeck2450,premium,manizales,colombia,2023/08/15,
+cloudlab8873,estandar,lima,peru,2024/04/13,
+rhythmdream1432,estandar,concepcion,chile,2021/09/18,
+fusionrush5785,premium,antofagasta,chile,2024/10/22,acousticdreams
+rhythmdream3490,estandar,maracaibo,venezuela,2022/08/27,
+synthdream8826,premium,alajuela,costa rica,2021/04/08,
+jazzrush2684,premium,cuenca,ecuador,2025/01/08,acoustictune1458
+retroline8707,premium,la plata,argentina,2023/09/04,acousticdreams
+synthzone2647,estandar,paysandu,uruguay,2023/12/12,
+classicsoul7629,estandar,antofagasta,chile,2021/12/18,
+rhythmmix1758,premium,mendoza,argentina,2025/08/25,
+melodylab7152,premium,santa cruz,bolivia,2021/07/03,acousticsoul1814
+melodydeck9760,premium,valencia,venezuela,2021/10/28,
+cloudroom2804,premium,barcelona,espana,2024/10/05,
+melodyzone9184,estandar,asuncion,paraguay,2021/01/14,
+vibetune4170,estandar,asuncion,paraguay,2023/08/27,
+vibedeck4562,premium,medellin,colombia,2025/07/24,synthdream8826
+sonicmix3815,premium,barcelona,espana,2022/11/05,melodylab7152
+rhythmzone6764,estandar,ciudad de mexico,mexico,2021/05/18,
+acousticdream5290,premium,la paz,bolivia,2021/03/29,
+waveline2327,estandar,asuncion,paraguay,2023/02/13,
+electropulse3851,estandar,salto,uruguay,2025/05/17,
+retrorush9747,estandar,cuenca,ecuador,2025/05/07,
+beatrush7088,premium,ciudad de mexico,mexico,2025/01/08,
+acousticdeck6523,estandar,arequipa,peru,2024/02/14,
+harmonysoul1029,estandar,valparaiso,chile,2024/07/15,
+rhythmsoul7603,premium,caracas,venezuela,2024/12/26,
+melodyroom2745,estandar,santa cruz,bolivia,2025/10/03,
+acousticsoul1814,premium,cordoba,argentina,2021/02/05,
+jazzrush8967,estandar,valencia,espana,2025/01/04,
+acousticline0113,estandar,cusco,peru,2023/05/27,
+echotune6360,estandar,cuenca,ecuador,2024/07/11,
+synthroom7290,estandar,quito,ecuador,2021/04/05,
+neonrush7994,premium,ciudad de mexico,mexico,2021/03/26,vibedeck4562
+jazzmix5529,premium,valencia,espana,2021/06/19,beatrush7088
+vibedream2525,estandar,barranquilla,colombia,2022/10/05,
+melodydeck7610,estandar,cartago,costa rica,2021/03/18,
+beattune9575,premium,montevideo,uruguay,2024/12/03,electrodream8768
+acoustictune6761,estandar,asuncion,paraguay,2023/03/11,
+jazztune2953,estandar,san jose,costa rica,2024/09/08,
+fusionlab9641,premium,santa cruz,bolivia,2023/07/30,
+pixelpulse3024,premium,maracaibo,venezuela,2024/11/13,
+pixeldream4173,premium,paysandu,uruguay,2023/08/16,synthdream8826
+electropulse8413,estandar,quito,ecuador,2025/07/18,
+rhythmsoul6076,premium,mendoza,argentina,2023/07/10,
+rhythmpulse0842,premium,la plata,argentina,2021/05/28,
+sonicmix0053,estandar,sevilla,espana,2025/06/22,
+retrozone8846,premium,cuenca,ecuador,2021/10/09,acousticdreams

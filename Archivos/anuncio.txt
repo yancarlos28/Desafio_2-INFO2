@@ -1,0 +1,28 @@
+C,Disfruta los mejores momentos de tu día con música sin límites en nuestra plataforma.
+C,Explora nuevas canciones y artistas cada semana, sin costo y al instante.
+C,Escucha los éxitos del momento y crea tu lista perfecta para cada ocasión.
+C,Descubre géneros nuevos y encuentra tu próxima canción favorita.
+C,Comparte tus playlists y deja que la música conecte con tus amigos.
+C,Actualiza tu biblioteca y no te pierdas los lanzamientos más recientes.
+C,Sube el volumen y deja que la música acompañe tus mejores recuerdos.
+C,Conéctate a nuestra comunidad y vive la experiencia del sonido sin fronteras.
+C,Encuentra podcasts, entrevistas y contenido exclusivo en un solo lugar.
+C,Personaliza tu experiencia musical y disfruta de miles de canciones gratuitas.
+B,Obtén audio sin interrupciones con la versión Premium y disfruta en alta calidad.
+B,Sáltate los anuncios y reproduce tus canciones favoritas sin pausas.
+B,Accede a listas de reproducción sin límites con calidad 320 kbps.
+B,Con Premium, descarga música y escucha sin conexión donde quieras.
+B,Disfruta sonido envolvente y una experiencia sin interrupciones con Premium.
+B,Elige tu canción favorita en cualquier momento: pasa a Premium ahora.
+B,Sigue escuchando lo que amas con calidad profesional y sin cortes.
+B,Convierte cada viaje en una experiencia musical única con Premium.
+AAA,Nueva temporada de lanzamientos exclusivos: artistas que marcan tendencia.
+AAA,Descubre las colaboraciones más esperadas del año solo aquí.
+AAA,Vive los estrenos globales antes que nadie con acceso anticipado.
+AAA,Disfruta conciertos digitales en vivo con tus artistas favoritos.
+AAA,Conoce a los nuevos talentos que están revolucionando la música.
+AAA,Participa en sorteos de entradas y experiencias únicas con Premium.
+AAA,Sumérgete en playlists curadas por expertos para cada estado de ánimo.
+AAA,Recibe recomendaciones personalizadas según tu estilo de reproducción.
+AAA,Accede a contenido exclusivo y remixes solo disponibles para usuarios Premium.
+AAA,Siente la música como nunca antes con sonido de estudio y sin interrupciones.
